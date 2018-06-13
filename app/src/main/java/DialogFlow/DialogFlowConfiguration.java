@@ -17,6 +17,7 @@ public class DialogFlowConfiguration {
 
     //for testing
     public static void main(String[] args) {
+        System.out.println("Hello World");
 
 //        Runnable helloRunnable = new Runnable() {
 //            public void run() {

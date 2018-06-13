@@ -6,6 +6,5 @@
 /.idea/workspace.xml
 .DS_Store
 /app/build
-/app/*.gradle
 /captures
 .externalNativeBuild

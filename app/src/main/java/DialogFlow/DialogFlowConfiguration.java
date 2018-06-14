@@ -23,6 +23,8 @@ public class DialogFlowConfiguration {
 
         System.out.print("sdf");
 
+        System.out.println("wanying here");
+
 //        Runnable helloRunnable = new Runnable() {
 //            public void run() {
 //                System.out.println("Hello world");

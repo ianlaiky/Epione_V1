@@ -82,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("snowboy-detect-android");
     }
 
+    // TODO: REPLACE MODEL FILE WITH PERSONAL MODEL FOR HOTWORD
+    //TODO:CONFIGURE NLU TO PASS PATIENT ID TO WEBHOOK
+    //TODO:CONFIGURE NLU TO GET INTENT AND CALL RELEVANT FUNCTION
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,10 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void AlertUser(String text)
-    {
-        textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH,null);
-    }
+
 
     //==== SET UP CONFIGURATIONS ============================================================================
     private void setUpConfigurations() {
@@ -245,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
     //similar to RESTFUL Request
     /* LINK TO DIALOGFLOW */
     private void setupNlu(String client_token) {
-        // TODO: Change Client Access Token
+        // TODO: Change Client Access Token - DONE
         String clientAccessToken = client_token;
         AIConfiguration aiConfiguration = new AIConfiguration(clientAccessToken,
                 AIConfiguration.SupportedLanguages.English);
@@ -253,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // TODO: REPLACE MODEL FILE WITH PERSONAL MODEL FOR HOTWORD
+
     private void setupHotword() {
         shouldDetect = false;
         SnowboyUtils.copyAssets(this);
@@ -273,6 +274,12 @@ public class MainActivity extends AppCompatActivity {
 
     //==== START CONFIGURATIONS ============================================================================
     private void startAsr() {
+
+        //when getting user feedback
+        //stop scheduling remainder to avoid clash
+        epione.executor.shutdown();
+
+
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -297,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void startTts(String text) {
+
         // Start TTS
         //TextToSpeech.QUEUE_FLUSH - remove appening words when speaking
         textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH,null);
@@ -371,8 +379,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //TODO:CONFIGURE HERE TO PASS PATIENT ID TO WEBHOOK
-    //TODO:CONFIGURE HERE TO GET INTENT AND CALL RELEVANT FUNCTION
+
     private void startNlu(final String text) {
         Runnable runnable = new Runnable() {
             @Override
@@ -392,11 +399,10 @@ public class MainActivity extends AppCompatActivity {
                     Fulfillment fulfillment = result.getFulfillment();
 
                     //speech is response text
-                    String responseText = fulfillment.getSpeech();
+                    String originalSpeech = fulfillment.getSpeech();
 
-                    //TODO:GET INTENT
                     String intentname = result.getMetadata().getIntentName();
-                    callIntent(intentname);
+                    callIntent(intentname,originalSpeech);
 
                    // startTts(responseText);
 
@@ -409,7 +415,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void callIntent(String intentname)
+    public void callIntent(String intentname,String originalSpeech)
     {
         //if the intent is to give user medicine
         if(intentname.equalsIgnoreCase("medicine.give"))
@@ -430,11 +436,28 @@ public class MainActivity extends AppCompatActivity {
             //step3.verify user first by facial recognition
             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, CAMERA_REQUEST);
-
-
-
-
         }
+        else if(intentname.equalsIgnoreCase("medicine.close"))
+        {
+            startTts("Okay,Closing Cabinet. I will remind you for when's its time for your next medicine");
+
+            //update remainder table
+
+            //update prescription table
+
+            //close cabinet box
+
+            //once user takes medicine already
+            //restart checking remainder
+            epione.checkRemainder("1");
+        }
+        else
+            {
+                startTts(originalSpeech);
+
+                //restart scheduling remainder
+                //epione.checkRemainder("1");
+            }
 
     }
 
@@ -460,22 +483,23 @@ public class MainActivity extends AppCompatActivity {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORERCT USER
+                    //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
                     if(epione.ValidatePatient("patientid",photo)) //if is correct user
                     {
                         //get patient prescription
                         Prescription PatientPrescription = epione.getPrescription("patientid");
 
+                        startTts("Please take the panadol in Box 1 and take 2 pills only");
                         //then read out instruction to user
-                        textToSpeech.speak("Please take the panadol in Box 1 and take 2 pills only ",TextToSpeech.QUEUE_FLUSH,null);
-                        while (textToSpeech.isSpeaking())
-                        {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
+//                        textToSpeech.speak("Please take the panadol in Box 1 and take 2 pills only ",TextToSpeech.QUEUE_FLUSH,null);
+//                        while (textToSpeech.isSpeaking())
+//                        {
+//                            try {
+//                                Thread.sleep(1000);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
 
                         //open cabinet box
                         epione.openBox();
@@ -489,6 +513,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+    }
+
+
+
+    public void AlertUser(String text)
+    {
+        textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH,null);
     }
 
 

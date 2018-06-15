@@ -13,6 +13,8 @@ import Model.Prescription;
 //interacts with UI,database and dialogflow
 public class EpioneController {
 
+     ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
     public MainActivity app;
 
     public EpioneController(MainActivity app)
@@ -28,8 +30,9 @@ public class EpioneController {
     * */
     public void checkRemainder(String patientID)
     {
+        executor = Executors.newSingleThreadScheduledExecutor();
 
-        final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        System.out.println("CHECKING REMAINDER FOR PATIENT: " + patientID);
 
         //call remainder database and check
         Runnable helloRunnable = new Runnable() {
@@ -56,6 +59,13 @@ public class EpioneController {
     }
 
 
+    /**TODO:ADD FACIAL RECOGNITON API
+     * Check if patient is who they say they are
+     *
+     * @param patientID
+     * @param photo - taken from User -
+     * @return
+     */
     public boolean ValidatePatient(String patientID, Bitmap photo)
     {
 

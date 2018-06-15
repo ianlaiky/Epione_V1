@@ -1,7 +1,0 @@
-package DialogFlow;
-
-public class DialogFlowController {
-
-    //TODO: DETERMINE WHICH INTENT IS WHICH AND CALL RELEVENT FUNCTION
-    //TODO: VALIDATE FOR ANY MISSING PARAMS
-}

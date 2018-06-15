@@ -1,9 +1,11 @@
 package sg.gowild.sademo;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -17,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -34,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 
 import DialogFlow.DialogFlowConfiguration;
+import Model.Prescription;
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import ai.api.AIServiceException;
@@ -50,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
     // View Variables
     private Button button;
     private TextView textView;
+    private ImageView imageView;
+
+    private static final int CAMERA_REQUEST = 1888;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
 
     // ASR Variables
     private SpeechRecognizer speechRecognizer;
@@ -64,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
     // Hotword Variables
     private boolean shouldDetect;
     private SnowboyDetect snowboyDetect;
+
+    //Controller
+    private EpioneController epione = new EpioneController(this);
 
 
     //need a real android phone to work
@@ -84,10 +95,15 @@ public class MainActivity extends AppCompatActivity {
 
         //TODO:FUNCTION TO CONSTANTLY CHECK FOR REMAINDER
         //AND ALERT TO XIAOBAI
+        //uncomment once everything is done
+        //epione.checkRemainder("patient id");
 
-        //TODO:SET UP FACIAL RECOGNITION
 
+    }
 
+    public void AlertUser(String text)
+    {
+        textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH,null);
     }
 
     //==== SET UP CONFIGURATIONS ============================================================================
@@ -107,14 +123,17 @@ public class MainActivity extends AppCompatActivity {
         // TODO: Setup Views if need be
         button = findViewById(R.id.button);
         textView = findViewById(R.id.textview);
-
+        imageView = findViewById(R.id.imageview);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //set false to disable the hotword detection
-                shouldDetect = false;
-                startAsr();
+               // shouldDetect = false;
+               // startAsr();
+                //Take Picture
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
         });
     }
@@ -277,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void startTts(String text) {
+    public void startTts(String text) {
         // Start TTS
         //TextToSpeech.QUEUE_FLUSH - remove appening words when speaking
         textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH,null);
@@ -375,10 +394,11 @@ public class MainActivity extends AppCompatActivity {
                     //speech is response text
                     String responseText = fulfillment.getSpeech();
 
-                    //TODO:GET INTENT AND CONTEXT AND VALIDATE FOR APPROPRIATE ACTION
-                    //
+                    //TODO:GET INTENT
+                    String intentname = result.getMetadata().getIntentName();
+                    callIntent(intentname);
 
-                    startTts(responseText);
+                   // startTts(responseText);
 
                 } catch (AIServiceException e) {
                     Log.e("nlu",e.getMessage(),e);
@@ -386,6 +406,89 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         Threadings.runInBackgroundThread(runnable);
+    }
+
+
+    public void callIntent(String intentname)
+    {
+        //if the intent is to give user medicine
+        if(intentname.equalsIgnoreCase("medicine.give"))
+        {
+            //step 1.first check if is time to give medicine
+
+            //step2. tell user, to scan face to verify
+            textToSpeech.speak("Okay,Let me scan your face",TextToSpeech.QUEUE_FLUSH,null);
+            while (textToSpeech.isSpeaking())
+            {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //step3.verify user first by facial recognition
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+
+
+
+        }
+
+    }
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //check if is from photo
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+
+            //photo taken
+            final Bitmap photo = (Bitmap) data.getExtras().get("data");
+
+            //for testing
+            imageView.setImageBitmap(photo);
+
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORERCT USER
+                    if(epione.ValidatePatient("patientid",photo)) //if is correct user
+                    {
+                        //get patient prescription
+                        Prescription PatientPrescription = epione.getPrescription("patientid");
+
+                        //then read out instruction to user
+                        textToSpeech.speak("Please take the panadol in Box 1 and take 2 pills only ",TextToSpeech.QUEUE_FLUSH,null);
+                        while (textToSpeech.isSpeaking())
+                        {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        //open cabinet box
+                        epione.openBox();
+                    }
+                }
+            };
+
+            Threadings.runInBackgroundThread(runnable);
+
+
+
+
+        }
     }
 
 

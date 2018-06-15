@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 
 import DialogFlow.DialogFlowConfiguration;
+import Hardware.EV3Configuration;
 import Model.Prescription;
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
@@ -53,6 +54,8 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
     // View Variables
     private Button button;
+    private Button ev3ButtonIn;
+    private Button ev3ButtonOut;
     private TextView textView;
     private ImageView imageView;
 
@@ -123,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
     private void setupViews() {
         // TODO: Setup Views if need be
         button = findViewById(R.id.button);
+        ev3ButtonIn = findViewById(R.id.ev3ButtonIn);
+        ev3ButtonOut = findViewById(R.id.ev3Buttonout);
+
+
+
         textView = findViewById(R.id.textview);
         imageView = findViewById(R.id.imageview);
 
@@ -137,6 +145,31 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             }
         });
+
+        ev3ButtonIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                EV3Configuration test = new EV3Configuration();
+               test.GetRequest("in");
+                Log.e("te","RUNNING eev3");
+
+            }
+        });
+
+        ev3ButtonOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EV3Configuration test = new EV3Configuration();
+                test.GetRequest("out");
+                Log.e("te","RUNNING eev3");
+            }
+        });
+
+
+
+
     }
 
     private void setupXiaoBaiButton() {
@@ -521,6 +554,7 @@ public class MainActivity extends AppCompatActivity {
     {
         textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH,null);
     }
+
 
 
     //========================================================================================================

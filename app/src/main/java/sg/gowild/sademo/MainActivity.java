@@ -36,6 +36,7 @@ import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Locale;
 
+import Database.DBController;
 import DialogFlow.DialogFlowConfiguration;
 import Hardware.EV3Configuration;
 import Model.Prescription;
@@ -124,6 +125,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupViews() {
+        // Setting up db
+
+        DBController db = new DBController();
+
+
+
+
+
         // TODO: Setup Views if need be
         button = findViewById(R.id.button);
         ev3ButtonIn = findViewById(R.id.ev3ButtonIn);

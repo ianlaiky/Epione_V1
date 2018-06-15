@@ -1,10 +1,13 @@
 package Database;
 
 
+import android.util.Log;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DBController {
@@ -34,11 +37,15 @@ public class DBController {
         try {
             url = "jdbc:mysql://" + DBControllerConfiguration.HOSTNAME + DBControllerConfiguration.DATABASE;
             con = DriverManager.getConnection(url, DBControllerConfiguration.USERNAME, DBControllerConfiguration.PASSWORD);
+
             System.out.println("Successfully connected to " + url+ ".");
+            Log.e("DB","Successfully connected to " + url+ ".");
         }
-        catch (java.sql.SQLException e) {
+        catch (SQLException e) {
             System.out.println("Connection failed ->"+ url);
+            Log.e("DB","Connection failed ->"+ url);
             System.out.println(e);
+            Log.e("DB",e.toString());
         }
     }
     /************************************************************
@@ -111,9 +118,18 @@ public class DBController {
             e.printStackTrace();
         }
     }
-    public static void main(String[] arg)throws Exception{
-        DBController db = new DBController();
-        db.testDriver();
-        db.getConnection();
+
+
+    public DBController(){
+
+
+        try {
+            testDriver();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        getConnection();
     }
+
+
 }

@@ -1,7 +1,7 @@
 package Database;
 
 
-import android.util.Log;
+//import android.util.Log;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -39,13 +39,13 @@ public class DBController {
             con = DriverManager.getConnection(url, DBControllerConfiguration.USERNAME, DBControllerConfiguration.PASSWORD);
 
             System.out.println("Successfully connected to " + url+ ".");
-            Log.e("DB","Successfully connected to " + url+ ".");
+           // Log.e("DB","Successfully connected to " + url+ ".");
         }
         catch (SQLException e) {
             System.out.println("Connection failed ->"+ url);
-            Log.e("DB","Connection failed ->"+ url);
+           // Log.e("DB","Connection failed ->"+ url);
             System.out.println(e);
-            Log.e("DB",e.toString());
+           // Log.e("DB",e.toString());
         }
     }
     /************************************************************
@@ -128,7 +128,7 @@ public class DBController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        getConnection();
+        //getConnection();
     }
 
 

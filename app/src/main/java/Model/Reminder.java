@@ -131,6 +131,58 @@ public class Reminder {
 
 
     }
+    public static JsonObject getRequestBuilderParameter2(String queryMethod, String paramName, String param, String paramName2, String param2) {
+//        final String[] returnStatement = new String[1];
+        final OkHttpClient client = new OkHttpClient();
+
+
+        HttpUrl httpUrl = new HttpUrl.Builder()
+                .scheme("http")
+                .host("epione-dialogflow.herokuapp.com")
+                .port(80)
+                .addPathSegment("database")
+                .addPathSegment(queryMethod)
+                .addQueryParameter(paramName, param)
+                .addQueryParameter(paramName2, param2)
+                .build();
+
+        System.out.println("Ev3Dev log url " + httpUrl.toString());
+
+
+        Request requesthttp = new Request.Builder()
+                .addHeader("accept", "application/json")
+                .url(httpUrl)
+                .build();
+
+        Response responses = null;
+
+
+        try {
+            responses = client.newCall(requesthttp).execute();
+
+//
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String jsonData = null;
+
+
+        try {
+            jsonData = responses.body().string();
+            System.out.println("Sys call");
+            System.out.println(jsonData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonArray = (JsonObject) jsonParser.parse(jsonData);
+        return jsonArray;
+
+
+    }
 
 
     public static List<Reminder> getAllReminder(){
@@ -205,20 +257,33 @@ public class Reminder {
         return allpat;
     }
 
+
+    public static String updateReminderPrescriptionTaken(String reminderId, String adherence){
+
+        JsonObject te = getRequestBuilderParameter2("updateReminderPrescriptionTaken","setAdhered",adherence,"reminderId",reminderId);
+
+        String ret = te.get("message").getAsString();
+        return ret;
+
+    }
+
+
     public static void main(String[]args){
 
-        List<Reminder> arr = getAllReminderByDate("11/6/2018");
+//        List<Reminder> arr = getAllReminderByDate("11/6/2018");
+//
+//        for(int i=0;i<arr.size();i++){
+//            System.out.println(arr.get(i).getReminderId());
+//            System.out.println(arr.get(i).getDateTake());
+//            System.out.println(arr.get(i).getTimeTake());
+//            System.out.println(arr.get(i).getPatientId());
+//            System.out.println(arr.get(i).getPrescriptionId());
+//            System.out.println(arr.get(i).getAdhered());
+//
+//
+//        }
 
-        for(int i=0;i<arr.size();i++){
-            System.out.println(arr.get(i).getReminderId());
-            System.out.println(arr.get(i).getDateTake());
-            System.out.println(arr.get(i).getTimeTake());
-            System.out.println(arr.get(i).getPatientId());
-            System.out.println(arr.get(i).getPrescriptionId());
-            System.out.println(arr.get(i).getAdhered());
-
-
-        }
+        System.out.println(updateReminderPrescriptionTaken("1","true"));
 
     }
 

@@ -10,6 +10,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -26,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,6 +40,7 @@ import java.util.Locale;
 
 import Database.DBController;
 import DialogFlow.DialogFlowConfiguration;
+import FacialRecognition.FacialRecognitionConfiguration;
 import Hardware.EV3Configuration;
 import Model.Patient;
 import Model.Prescription;
@@ -52,6 +55,8 @@ import ai.kitt.snowboy.SnowboyDetect;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class MainActivity extends AppCompatActivity {
     // View Variables
@@ -152,8 +157,14 @@ public class MainActivity extends AppCompatActivity {
                // shouldDetect = false;
                // startAsr();
                 //Take Picture
+
+
+
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+
+
             }
         });
 
@@ -512,11 +523,21 @@ public class MainActivity extends AppCompatActivity {
         //check if is from photo
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
 
+
+
             //photo taken
             final Bitmap photo = (Bitmap) data.getExtras().get("data");
 
+
             //for testing
             imageView.setImageBitmap(photo);
+
+//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//            byte[] byteArray = stream.toByteArray();
+//            photo.recycle();
+//
+//            FacialRecognitionConfiguration.postRequest(byteArray);
 
 //            try {
 //                Thread.sleep(1000);

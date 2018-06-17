@@ -5,7 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import okhttp3.HttpUrl;
@@ -131,6 +133,7 @@ public class Reminder {
 
 
     }
+
     public static JsonObject getRequestBuilderParameter2(String queryMethod, String paramName, String param, String paramName2, String param2) {
 //        final String[] returnStatement = new String[1];
         final OkHttpClient client = new OkHttpClient();
@@ -185,15 +188,72 @@ public class Reminder {
     }
 
 
-    public static List<Reminder> getAllReminder(){
+    public static JsonObject getRequestBuilderParameterReminderInsert(String dateTake, String timeTake, String patientId, String prescriptionId, String adhered) {
+//        final String[] returnStatement = new String[1];
+        final OkHttpClient client = new OkHttpClient();
+
+
+        HttpUrl httpUrl = new HttpUrl.Builder()
+                .scheme("http")
+                .host("epione-dialogflow.herokuapp.com")
+                .port(80)
+                .addPathSegment("database")
+                .addPathSegment("insertDataIntoReminder")
+                .addQueryParameter("dateTake", dateTake)
+                .addQueryParameter("timeTake", timeTake)
+                .addQueryParameter("patientId", patientId)
+                .addQueryParameter("prescriptionId", prescriptionId)
+                .addQueryParameter("adhered", adhered)
+                .build();
+
+        System.out.println("Ev3Dev log url " + httpUrl.toString());
+
+
+        Request requesthttp = new Request.Builder()
+                .addHeader("accept", "application/json")
+                .url(httpUrl)
+                .build();
+
+        Response responses = null;
+
+
+        try {
+            responses = client.newCall(requesthttp).execute();
+
+//
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String jsonData = null;
+
+
+        try {
+            jsonData = responses.body().string();
+            System.out.println("Sys call");
+            System.out.println(jsonData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonArray = (JsonObject) jsonParser.parse(jsonData);
+        return jsonArray;
+
+
+    }
+
+
+    public static List<Reminder> getAllReminder() {
         List<Reminder> allpat = new ArrayList<>();
         JsonArray jsArr = getRequestBuilder("getAllReminder", "", "");
 
-        for(int i =0;i<jsArr.size();i++){
+        for (int i = 0; i < jsArr.size(); i++) {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Reminder obj = new Reminder(jobj.get("reminderId").getAsInt(),jobj.get("dateTake").getAsString(),jobj.get("timeTake").getAsString(),jobj.get("patientId").getAsInt(),jobj.get("prescriptionId").getAsInt(),jobj.get("adhered").getAsString());
+            Reminder obj = new Reminder(jobj.get("reminderId").getAsInt(), jobj.get("dateTake").getAsString(), jobj.get("timeTake").getAsString(), jobj.get("patientId").getAsInt(), jobj.get("prescriptionId").getAsInt(), jobj.get("adhered").getAsString());
 
 
             allpat.add(obj);
@@ -203,15 +263,15 @@ public class Reminder {
         return allpat;
     }
 
-    public static List<Reminder> getAllReminderById(String para){
+    public static List<Reminder> getAllReminderById(String para) {
         List<Reminder> allpat = new ArrayList<>();
         JsonArray jsArr = getRequestBuilder("getAllReminderById", "reminderId", para);
 
-        for(int i =0;i<jsArr.size();i++){
+        for (int i = 0; i < jsArr.size(); i++) {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Reminder obj = new Reminder(jobj.get("reminderId").getAsInt(),jobj.get("dateTake").getAsString(),jobj.get("timeTake").getAsString(),jobj.get("patientId").getAsInt(),jobj.get("prescriptionId").getAsInt(),jobj.get("adhered").getAsString());
+            Reminder obj = new Reminder(jobj.get("reminderId").getAsInt(), jobj.get("dateTake").getAsString(), jobj.get("timeTake").getAsString(), jobj.get("patientId").getAsInt(), jobj.get("prescriptionId").getAsInt(), jobj.get("adhered").getAsString());
 
 
             allpat.add(obj);
@@ -222,15 +282,15 @@ public class Reminder {
     }
 
 
-    public static List<Reminder> getAllReminderByPatientId(String para){
+    public static List<Reminder> getAllReminderByPatientId(String para) {
         List<Reminder> allpat = new ArrayList<>();
         JsonArray jsArr = getRequestBuilder("getAllReminderByPatientId", "patientId", para);
 
-        for(int i =0;i<jsArr.size();i++){
+        for (int i = 0; i < jsArr.size(); i++) {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Reminder obj = new Reminder(jobj.get("reminderId").getAsInt(),jobj.get("dateTake").getAsString(),jobj.get("timeTake").getAsString(),jobj.get("patientId").getAsInt(),jobj.get("prescriptionId").getAsInt(),jobj.get("adhered").getAsString());
+            Reminder obj = new Reminder(jobj.get("reminderId").getAsInt(), jobj.get("dateTake").getAsString(), jobj.get("timeTake").getAsString(), jobj.get("patientId").getAsInt(), jobj.get("prescriptionId").getAsInt(), jobj.get("adhered").getAsString());
 
 
             allpat.add(obj);
@@ -239,15 +299,16 @@ public class Reminder {
         }
         return allpat;
     }
-    public static List<Reminder> getAllReminderByDate(String para){
+
+    public static List<Reminder> getAllReminderByDate(String para) {
         List<Reminder> allpat = new ArrayList<>();
         JsonArray jsArr = getRequestBuilder("getAllReminderByDate", "dateTake", para);
 
-        for(int i =0;i<jsArr.size();i++){
+        for (int i = 0; i < jsArr.size(); i++) {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Reminder obj = new Reminder(jobj.get("reminderId").getAsInt(),jobj.get("dateTake").getAsString(),jobj.get("timeTake").getAsString(),jobj.get("patientId").getAsInt(),jobj.get("prescriptionId").getAsInt(),jobj.get("adhered").getAsString());
+            Reminder obj = new Reminder(jobj.get("reminderId").getAsInt(), jobj.get("dateTake").getAsString(), jobj.get("timeTake").getAsString(), jobj.get("patientId").getAsInt(), jobj.get("prescriptionId").getAsInt(), jobj.get("adhered").getAsString());
 
 
             allpat.add(obj);
@@ -258,17 +319,71 @@ public class Reminder {
     }
 
 
-    public static String updateReminderPrescriptionTaken(String reminderId, String adherence){
+    public static String updateReminderPrescriptionTaken(String reminderId, String adherence) {
 
-        JsonObject te = getRequestBuilderParameter2("updateReminderPrescriptionTaken","setAdhered",adherence,"reminderId",reminderId);
+        JsonObject te = getRequestBuilderParameter2("updateReminderPrescriptionTaken", "setAdhered", adherence, "reminderId", reminderId);
 
         String ret = te.get("message").getAsString();
         return ret;
 
     }
 
+    public static String insertDataIntoReminder(String patientId, String prescriptionId, int amtToTakeEachDay, int timesToTakeEachDay, int medicineQuantity) {
 
-    public static void main(String[]args){
+        int hrsInDay = 24;
+        int initTime = 0;
+
+
+        int hrsToAdd = hrsInDay / timesToTakeEachDay;
+        int howManyTimesToLoop = medicineQuantity / amtToTakeEachDay;
+
+
+        SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatterTime = new SimpleDateFormat("HHmm");
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, initTime);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+
+        ArrayList<ArrayList<String>> dateTimeAll = new ArrayList<>();
+        for (int i = 0; i < howManyTimesToLoop; i++) {
+            ArrayList<String> dateTimeEach = new ArrayList<>();
+            cal.add(Calendar.HOUR_OF_DAY, hrsToAdd);
+
+
+            System.out.println(cal.getTime());
+            System.out.println(formatterDate.format(cal.getTime()));
+            System.out.println(formatterTime.format(cal.getTime()));
+
+            dateTimeEach.add(formatterDate.format(cal.getTime()));
+            dateTimeEach.add(formatterTime.format(cal.getTime()));
+
+            dateTimeAll.add(dateTimeEach);
+        }
+        String ret = "Empty";
+        for (int i = 0; i < dateTimeAll.size(); i++) {
+
+            System.out.println(dateTimeAll.get(i).get(0));
+            System.out.println(dateTimeAll.get(i).get(1));
+
+            JsonObject te = getRequestBuilderParameterReminderInsert(dateTimeAll.get(i).get(0), dateTimeAll.get(i).get(1), patientId, prescriptionId, "false");
+
+            ret = te.get("message").getAsString();
+            System.out.println("------------");
+
+        }
+
+
+        return ret;
+
+    }
+
+
+    public static void main(String[] args) {
+        insertDataIntoReminder("1", "1", 3, 3, 30);
 
 //        List<Reminder> arr = getAllReminderByDate("11/6/2018");
 //
@@ -283,12 +398,12 @@ public class Reminder {
 //
 //        }
 
-        System.out.println(updateReminderPrescriptionTaken("1","true"));
+//        System.out.println(insertDataIntoReminder());
+
+        // time calculator
+
 
     }
-
-
-
 
 
 }

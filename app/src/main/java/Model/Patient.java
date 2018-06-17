@@ -18,15 +18,14 @@ import okhttp3.Response;
 
 public class Patient {
 
-    String patientId;
+    int patientId;
     String name;
 
-
-    public String getPatientId() {
+    public int getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(String patientId) {
+    public void setPatientId(int patientId) {
         this.patientId = patientId;
     }
 
@@ -38,12 +37,12 @@ public class Patient {
         this.name = name;
     }
 
-    public Patient(String patientId, String name) {
+    public Patient(int patientId, String name) {
         this.patientId = patientId;
         this.name = name;
     }
 
-    public static JsonArray GetRequestBuilder(String queryMethod, String paramName, String param) {
+    public static JsonArray getRequestBuilder(String queryMethod, String paramName, String param) {
 //        final String[] returnStatement = new String[1];
         final OkHttpClient client = new OkHttpClient();
 
@@ -129,38 +128,49 @@ public class Patient {
     public static void main(String[] args) {
 
 
-//        GetRequestBuilder("getAllPatient", "", "");
 
 
         List<Patient> paList = Patient.getAllPatientDetails();
         for(int i =0;i<paList.size();i++){
             System.out.println("FROM MAIN");
             System.out.println(paList.get(i).getName());
+            System.out.println(paList.get(i).getPatientId());
         }
 
 
-//        JsonObject jobj = (JsonObject) jsArr.get(0);
-//        System.out.println(jobj);
-//        System.out.println(jobj.get("patientId"));
-
-
-//       ArrayList<Patient> pa = new ArrayList<Patient>();
 
     }
 
     public static List<Patient> getAllPatientDetails(){
         List<Patient> allpat = new ArrayList<>();
-        JsonArray jsArr = GetRequestBuilder("getAllPatient", "", "");
+        JsonArray jsArr = getRequestBuilder("getAllPatient", "", "");
 
         for(int i =0;i<jsArr.size();i++){
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Patient paObj = new Patient(jobj.get("patientId").getAsString(),jobj.get("name").getAsString());
+            Patient paObj = new Patient(jobj.get("patientId").getAsInt(),jobj.get("name").getAsString());
 
             allpat.add(paObj);
 
             
+        }
+        return allpat;
+    }
+
+    public static List<Patient> getAllPatientDetailsById(String id){
+        List<Patient> allpat = new ArrayList<>();
+        JsonArray jsArr = getRequestBuilder("getPatientThruID", "patientid", id.toString());
+
+        for(int i =0;i<jsArr.size();i++){
+            JsonObject jobj = (JsonObject) jsArr.get(i);
+            System.out.println(jobj);
+
+            Patient paObj = new Patient(jobj.get("patientId").getAsInt(),jobj.get("name").getAsString());
+
+            allpat.add(paObj);
+
+
         }
         return allpat;
     }

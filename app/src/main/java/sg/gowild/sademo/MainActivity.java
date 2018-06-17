@@ -128,11 +128,8 @@ public class MainActivity extends AppCompatActivity {
     private void setupViews() {
         // Setting up db
 //
-//        List<Patient> paList = Patient.getAllPatientDetails();
-//        for(int i =0;i<paList.size();i++){
-//            System.out.println("FROM MAIN");
-//            System.out.println(paList.get(i).getName());
-//        }
+
+
 
 
 

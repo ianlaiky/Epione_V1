@@ -53,18 +53,6 @@ public class EV3Configuration {
         });
 
 
-//        try (Response response = client.newCall(requesthttp).execute()) {
-//            returnStatement = response.body().string();
-//        } catch (IOException e) {
-//            returnStatement = e.toString();
-//            Log.e("ERROR",e.toString());
-////            e.printStackTrace();
-//        }
-//
-//        return returnStatement;
-//
-
-
     }
 }
 

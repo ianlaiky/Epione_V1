@@ -39,6 +39,7 @@ import java.util.Locale;
 import Database.DBController;
 import DialogFlow.DialogFlowConfiguration;
 import Hardware.EV3Configuration;
+import Model.Patient;
 import Model.Prescription;
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
@@ -126,8 +127,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViews() {
         // Setting up db
-
-        DBController db = new DBController();
+//
+//        List<Patient> paList = Patient.getAllPatientDetails();
+//        for(int i =0;i<paList.size();i++){
+//            System.out.println("FROM MAIN");
+//            System.out.println(paList.get(i).getName());
+//        }
 
 
 

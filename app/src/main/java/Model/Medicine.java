@@ -162,12 +162,32 @@ public class Medicine {
 
     }
 
+    public static List<Medicine> getAllMedicineDetailsByMedId(String medId){
+        List<Medicine> allMed = new ArrayList<>();
+
+        JsonArray jsArr = getRequestBuilder("getAllMedicineById","medId",medId);
+
+        for(int i=0;i<jsArr.size();i++){
+            JsonObject jobj = (JsonObject) jsArr.get(i);
+            System.out.println(jobj);
+
+            Medicine medObj = new Medicine(jobj.get("medId").getAsInt(),jobj.get("medName").getAsString(),jobj.get("medType").getAsString(),jobj.get("metricValue").getAsString());
+            allMed.add(medObj);
+
+
+        }
+
+        return allMed;
+
+
+    }
+
 
 
 
     public static void main(String[]args){
 
-        List<Medicine> jsarr = getAllMedicineDetails();
+        List<Medicine> jsarr = getAllMedicineDetailsByMedId("2");
 
         for(int i=0;i<jsarr.size();i++){
             System.out.println(jsarr.get(i).getMedId());
@@ -181,5 +201,7 @@ public class Medicine {
 
 
     }
+
+
 
 }

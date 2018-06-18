@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import Hardware.EV3Configuration;
+import Model.Patient;
 import Model.Prescription;
 
 //interacts with UI,database and dialogflow
@@ -26,6 +29,28 @@ public class EpioneController {
 
     }
 
+
+    public static Patient getPatient()
+    {
+
+        try {
+
+
+            List<Patient> pt = new Patient().execute(new String[]{"getAllPatientDetailsById", "1"}).get();
+            for (int i = 0; i < pt.size(); i++) {
+                System.out.println("haahahahahhahahah");
+                System.out.println(pt.get(i).getName());
+                System.out.println(pt.get(i).getFaceId());
+                System.out.println(pt.get(i).getPatientId());
+                return pt.get(i);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
     *  Check remainder for patient for every 5 minutes

@@ -34,11 +34,12 @@ import org.json.JSONObject;
 
 public class FacialRecognitionConfiguration extends AsyncTask<String, Void, String> {
 
-    private Bitmap photo;
+//    private Bitmap photo;
+    private Path path;
 
 
-    public FacialRecognitionConfiguration(Bitmap photo){
-        this.photo = photo;
+    public FacialRecognitionConfiguration(Path path){
+        this.path = path;
     }
 
 

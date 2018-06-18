@@ -1,10 +1,11 @@
 package Model;
 
+import android.os.AsyncTask;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 
 
 import java.io.IOException;
@@ -16,10 +17,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class Patient {
+public class Patient extends AsyncTask<String[], Void, List<Patient>> {
 
     int patientId;
     String name;
+    String faceId;
 
     public int getPatientId() {
         return patientId;
@@ -37,10 +39,23 @@ public class Patient {
         this.name = name;
     }
 
-    public Patient(int patientId, String name) {
+    public String getFaceId() {
+        return faceId;
+    }
+
+    public void setFaceId(String faceId) {
+        this.faceId = faceId;
+    }
+
+    public Patient(int patientId, String name, String faceId) {
         this.patientId = patientId;
         this.name = name;
+        this.faceId = faceId;
     }
+
+    public Patient() {
+    }
+
 
     public static JsonArray getRequestBuilder(String queryMethod, String paramName, String param) {
 //        final String[] returnStatement = new String[1];
@@ -128,45 +143,43 @@ public class Patient {
     public static void main(String[] args) {
 
 
-
-
         List<Patient> paList = Patient.getAllPatientDetails();
-        for(int i =0;i<paList.size();i++){
+        for (int i = 0; i < paList.size(); i++) {
             System.out.println("FROM MAIN");
             System.out.println(paList.get(i).getName());
             System.out.println(paList.get(i).getPatientId());
+            System.out.println(paList.get(i).getFaceId());
         }
-
 
 
     }
 
-    public static List<Patient> getAllPatientDetails(){
+    public static List<Patient> getAllPatientDetails() {
         List<Patient> allpat = new ArrayList<>();
         JsonArray jsArr = getRequestBuilder("getAllPatient", "", "");
 
-        for(int i =0;i<jsArr.size();i++){
+        for (int i = 0; i < jsArr.size(); i++) {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Patient paObj = new Patient(jobj.get("patientId").getAsInt(),jobj.get("name").getAsString());
+            Patient paObj = new Patient(jobj.get("patientId").getAsInt(), jobj.get("name").getAsString(), jobj.get("faceId").getAsString());
 
             allpat.add(paObj);
 
-            
+
         }
         return allpat;
     }
 
-    public static List<Patient> getAllPatientDetailsById(String id){
+    public static List<Patient> getAllPatientDetailsById(String id) {
         List<Patient> allpat = new ArrayList<>();
         JsonArray jsArr = getRequestBuilder("getPatientThruID", "patientid", id.toString());
 
-        for(int i =0;i<jsArr.size();i++){
+        for (int i = 0; i < jsArr.size(); i++) {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Patient paObj = new Patient(jobj.get("patientId").getAsInt(),jobj.get("name").getAsString());
+            Patient paObj = new Patient(jobj.get("patientId").getAsInt(), jobj.get("name").getAsString(), jobj.get("faceId").getAsString());
 
             allpat.add(paObj);
 
@@ -175,5 +188,23 @@ public class Patient {
         return allpat;
     }
 
+    @Override
+    protected List<Patient> doInBackground(String[]... strings) {
 
+
+        System.out.println(strings[0][0]);
+        System.out.println(strings[0][1]);
+
+
+        if(strings[0][0].equalsIgnoreCase("getAllPatientDetails")){
+
+            return getAllPatientDetails();
+        }else if(strings[0][0].equalsIgnoreCase("getAllPatientDetailsById")){
+            return getAllPatientDetailsById(strings[0][1].toString());
+
+        }
+
+
+        return null;
+    }
 }

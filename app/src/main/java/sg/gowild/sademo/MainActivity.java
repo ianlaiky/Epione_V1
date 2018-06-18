@@ -39,8 +39,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import Database.DBController;
 import DialogFlow.DialogFlowConfiguration;
@@ -152,11 +154,21 @@ public class MainActivity extends AppCompatActivity {
     private void setupViews() {
         // Setting up db
 //
-
-
-
-
-
+//        try {
+//
+//
+//            List<Patient> pt = new Patient().execute(new String[]{"getAllPatientDetailsById", "1"}).get();
+//            for (int i = 0; i < pt.size(); i++) {
+//                System.out.println("PRINT from main");
+//                System.out.println(pt.get(i).getName());
+//                System.out.println(pt.get(i).getFaceId());
+//                System.out.println(pt.get(i).getPatientId());
+//            }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
 
 
         // TODO: Setup Views if need be

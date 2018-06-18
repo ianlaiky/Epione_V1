@@ -96,9 +96,7 @@ public  void postRequest() throws IOException {
     protected String doInBackground(String... strings) {
 
         String faceId = "";
-
         String nyan = "";
-
 
 
 

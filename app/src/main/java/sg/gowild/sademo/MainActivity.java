@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -567,6 +568,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bitmap =null;
             try {
                  bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),photoURI);
+                 bitmap = RotateBitmap(bitmap,90);
                 imageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -622,6 +624,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
 

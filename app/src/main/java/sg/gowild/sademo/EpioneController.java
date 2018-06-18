@@ -17,6 +17,7 @@ import FacialRecognition.FacialRecognitionConfiguration;
 import Hardware.EV3Configuration;
 import Model.Patient;
 import Model.Prescription;
+import Model.Reminder;
 
 //interacts with UI,database and dialogflow
 public class EpioneController {
@@ -71,23 +72,32 @@ public class EpioneController {
             int count = 0;
             public void run() {
                 //for testing
-                count ++;
-                System.out.println("Calling remainder");
+               // count ++;
+               // System.out.println("Calling remainder");
+                try {
+                    List<Reminder> reminders = new Reminder().execute(new String[]{"getNextFiveMinuteReminder"}).get();
+                    System.out.println("checking remainder");
+                    if(reminders.get(0) != null) //if have remainder
+                    {   System.out.println("executor stop");
+                        executor.shutdown();
 
-                if(count == 5) //if have remainder
-                {   System.out.println("executor stop");
-                    executor.shutdown();
+                        //WILL ALERT USER IN UI
+                        app.AlertUser("Alert Alert, TIME TO TAKE MEDICINE !! for patient : "+ reminders.get(0).getPatientId());
+                    }
 
-                    //WILL ALERT USER IN UI
-                    app.AlertUser("Alert Alert, TIME TO TAKE MEDICINE !!");
-
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
                 }
+
+
 
                 System.out.println(count);
 
             }
         };
-        executor.scheduleAtFixedRate(helloRunnable, 0, 3, TimeUnit.SECONDS);//every 5 minute
+        executor.scheduleAtFixedRate(helloRunnable, 0, 10, TimeUnit.SECONDS);//every 5 minute
     }
 
 
@@ -128,6 +138,16 @@ public class EpioneController {
 
     public void closeBox()
     {
+        try {
+            //will check the past all the way and if the adherence is false
+            // will check 5 min after as buffer
+            new Reminder().execute(new String[]{"updateReminderPrescriptionTaken","true"," place reminderid here"}).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
         //close box
         ev3Box.GetRequest("in");
     }

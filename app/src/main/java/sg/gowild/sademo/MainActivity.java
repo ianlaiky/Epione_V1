@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO:FUNCTION TO CONSTANTLY CHECK FOR REMAINDER
         //AND ALERT TO XIAOBAI
         //uncomment once everything is done
-        //epione.checkRemainder("patient id");
+        epione.checkRemainder("patient id");
 
 
     }
@@ -516,7 +516,7 @@ public class MainActivity extends AppCompatActivity {
 
             //once user takes medicine already
             //restart checking remainder
-            epione.checkRemainder("1");
+            //epione.checkRemainder("");
         } else {
             startTts(originalSpeech);
 

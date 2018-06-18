@@ -28,6 +28,9 @@ public class Reminder extends AsyncTask<String[],Void,List<Reminder>>{
     int prescriptionId;
     String adhered;
 
+    public Reminder() {
+    }
+
     public Reminder(int reminderId, String dateTake, String timeTake, int patientId, int prescriptionId, String adhered) {
         this.reminderId = reminderId;
         this.dateTake = dateTake;
@@ -446,8 +449,8 @@ public class Reminder extends AsyncTask<String[],Void,List<Reminder>>{
 
     @Override
     protected List<Reminder> doInBackground(String[]... strings) {
-        System.out.println(strings[0][0]);
-        System.out.println(strings[0][1]);
+        //System.out.println(strings[0][0]);
+        //System.out.println(strings[0][1]);
 
 
 

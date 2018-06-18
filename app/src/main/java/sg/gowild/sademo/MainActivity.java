@@ -162,24 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViews() {
         // Setting up db
-//
 
-
-//        try {
-//
-//
-//            List<Patient> pt = new Patient().execute(new String[]{"getAllPatientDetailsById", "1"}).get();
-//            for (int i = 0; i < pt.size(); i++) {
-//                System.out.println("PRINT from main");
-//                System.out.println(pt.get(i).getName());
-//                System.out.println(pt.get(i).getFaceId());
-//                System.out.println(pt.get(i).getPatientId());
-//            }
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
 
 
         // TODO: Setup Views if need be
@@ -551,14 +534,6 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
-
-
-
-
-
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //check if is from photo
@@ -610,6 +585,7 @@ public class MainActivity extends AppCompatActivity {
                         {
                             //get patient prescription
                             Prescription PatientPrescription = epione.getPrescription("patientid");
+                            epione.getPatient();
 
                             startTts("Please take the panadol in Box 1 and take 2 pills only");
                             //then read out instruction to user

@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import FacialRecognition.FacialRecognitionConfiguration;
 import Hardware.EV3Configuration;
 import Model.Prescription;
 
@@ -72,6 +76,12 @@ public class EpioneController {
     public boolean ValidatePatient(String patientID, Uri pathToPhoto)
     {
 
+//        File finalFile = new File(getRealPathFromURI(tempUri));
+        Path path = Paths.get(pathToPhoto.getPath());
+        new FacialRecognitionConfiguration(path).execute("");
+
+
+
         boolean isValidUser = true;
         //step1. verify patient through facial recogntion
 
@@ -96,5 +106,12 @@ public class EpioneController {
         //close box
         ev3Box.GetRequest("in");
     }
+
+//    public String getRealPathFromURI(Uri uri) {
+//        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+//        cursor.moveToFirst();
+//        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+//        return cursor.getString(idx);
+//    }
 
 }

@@ -5,9 +5,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.HttpUrl;
@@ -382,8 +384,19 @@ public class Reminder {
     }
 
 
+    public List<Reminder> getNextFiveMinuteReminder(){
+
+//        List<Reminder> todaysReminder = getAllReminderByDate()
+
+
+
+
+
+        return null;
+    }
+
     public static void main(String[] args) {
-        insertDataIntoReminder("1", "1", 3, 3, 30);
+//        insertDataIntoReminder("1", "1", 3, 3, 30);
 
 //        List<Reminder> arr = getAllReminderByDate("11/6/2018");
 //
@@ -401,6 +414,41 @@ public class Reminder {
 //        System.out.println(insertDataIntoReminder());
 
         // time calculator
+
+//        SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy");
+//        Calendar cal = Calendar.getInstance();
+//
+//        System.out.println(formatterDate.format(cal.getTime()));
+//
+//        List<Reminder> todaysReminder = getAllReminderByDate(formatterDate.format(cal.getTime()).toString());
+//        System.out.println(todaysReminder.size());
+//
+//
+//        for (int i = 0; i < todaysReminder.size(); i++) {
+//            System.out.println("---------------");
+//
+//
+//            System.out.println(todaysReminder.get(i).getTimeTake());
+//            System.out.println(todaysReminder.get(i).getAdhered());
+//            System.out.println(todaysReminder.get(i).getPatientId());
+//            System.out.println(todaysReminder.get(i).getPrescriptionId());
+//            System.out.println(todaysReminder.get(i).getReminderId());
+//            System.out.println(todaysReminder.get(i).getTimeTake());
+//
+//        }
+
+        Date timeNow = new Date();
+        SimpleDateFormat parser = new SimpleDateFormat("HHmm");
+        Date startt = null;
+
+//        try {
+//            startt = parser.parse("1550");
+//            System.out.println(startt.after(parser.format(timeNow.getTime())));
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
+
 
 
     }

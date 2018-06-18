@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -38,10 +39,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import Database.DBController;
 import DialogFlow.DialogFlowConfiguration;
@@ -57,11 +63,19 @@ import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
 import ai.api.model.Result;
 import ai.kitt.snowboy.SnowboyDetect;
+import okhttp3.MediaType;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+
 
 public class MainActivity extends AppCompatActivity {
     // View Variables
@@ -69,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
     private Button ev3ButtonIn;
     private Button ev3ButtonOut;
     private TextView textView;
-    private ImageView imageView;
+    public ImageView imageView;
+    private Bitmap pic;
 
     //for camera
     private static final int CAMERA_REQUEST = 1888;
@@ -93,6 +108,9 @@ public class MainActivity extends AppCompatActivity {
     //Controller
     private EpioneController epione = new EpioneController(this);
 
+    public static Path path2 = null;
+
+
 
     //need a real android phone to work
     static {
@@ -113,6 +131,11 @@ public class MainActivity extends AppCompatActivity {
 
         //enable hotword
         startHotword();
+
+
+//        new FacialRecognitionConfiguration(pic).execute("");
+
+//        new FacialRecognitionConfiguration().execute("");
 
         //TODO:FUNCTION TO CONSTANTLY CHECK FOR REMAINDER
         //AND ALERT TO XIAOBAI
@@ -139,6 +162,23 @@ public class MainActivity extends AppCompatActivity {
     private void setupViews() {
         // Setting up db
 //
+
+
+//        try {
+//
+//
+//            List<Patient> pt = new Patient().execute(new String[]{"getAllPatientDetailsById", "1"}).get();
+//            for (int i = 0; i < pt.size(); i++) {
+//                System.out.println("PRINT from main");
+//                System.out.println(pt.get(i).getName());
+//                System.out.println(pt.get(i).getFaceId());
+//                System.out.println(pt.get(i).getPatientId());
+//            }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
 
 
         // TODO: Setup Views if need be
@@ -502,6 +542,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+//    public Uri getImageUri(Context inContext, Bitmap inImage) {
+//        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+//        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+//        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+//        return Uri.parse(path);
+//    }
+
 
 
 
@@ -542,17 +589,18 @@ public class MainActivity extends AppCompatActivity {
 //                e.printStackTrace();
 //            }
 
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
-                    if (epione.ValidatePatient("patientid", photo)) //if is correct user
-                    {
-                        //get patient prescription
-                        Prescription PatientPrescription = epione.getPrescription("patientid");
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("PIKA CHUUUU");
+                        //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
+                        if (epione.ValidatePatient("patientid", photo)) //if is correct user
+                        {
+                            //get patient prescription
+                            Prescription PatientPrescription = epione.getPrescription("patientid");
 
-                        startTts("Please take the panadol in Box 1 and take 2 pills only");
-                        //then read out instruction to user
+                            startTts("Please take the panadol in Box 1 and take 2 pills only");
+                            //then read out instruction to user
 //                        textToSpeech.speak("Please take the panadol in Box 1 and take 2 pills only ",TextToSpeech.QUEUE_FLUSH,null);
 //                        while (textToSpeech.isSpeaking())
 //                        {
@@ -563,13 +611,13 @@ public class MainActivity extends AppCompatActivity {
 //                            }
 //                        }
 
-                        //open cabinet box
-                        epione.openBox();
+                            //open cabinet box
+                            epione.openBox();
+                        }
                     }
-                }
-            };
+                };
 
-            Threadings.runInBackgroundThread(runnable);
+                Threadings.runInBackgroundThread(runnable);
 
 
         }
@@ -600,6 +648,51 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public  void postRequest() throws IOException {
+
+        System.out.println("YOLOOO");
+        OkHttpClient client = new OkHttpClient();
+        //application/octet-stream
+//        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+//        RequestBody body = RequestBody.create(JSON, "{\"url\":\"https://i.imgur.com/9sAyPWE.jpg\"}");
+
+        //        File file = new File("D:\\AndroidStudio\\Epione_V1\\app\\src\\main\\assets\\images\\9sAyPWE.jpg");
+//    Path path = Paths.get("D:\\AndroidStudio\\Epione_V1\\app\\src\\main\\assets\\images\\9sAyPWE.jpg");
+
+        byte[] bttest = Files.readAllBytes(MainActivity.path2);
+
+
+//        System.out.println(path + " TEST THE PATH");
+
+        MediaType fdf = MediaType.parse("application/octet-stream");
+        RequestBody body = RequestBody.create(fdf, bttest);
+
+
+        //        RequestBody formBody = new FormBody.Builder()
+//                .add("url","https://i.imgur.com/9sAyPWE.jpg")
+//                .build();
+        Request request = new Request.Builder()
+                .url("https://southeastasia.api.cognitive.microsoft.com/face/v1.0/detect")
+
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Ocp-Apim-Subscription-Key", "f697d347019b4c74976466006f62d811")
+                .build();
+
+        try
+
+        {
+            Response response = client.newCall(request).execute();
+            System.out.println(response.body().string());
+            // Do something with the response.
+        } catch(
+                IOException e)
+
+        {
+            e.printStackTrace();
+        }
+
+    }
 
     private File createImageFile() throws IOException {
         String timeStamp =

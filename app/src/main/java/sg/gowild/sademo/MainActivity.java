@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 100;
     private String imageFilePath;
     private Uri photoURI;
+    private Uri pfile;
+    private Path path;
 
     // ASR Variables
     private SpeechRecognizer speechRecognizer;
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     //Controller
     private EpioneController epione = new EpioneController(this);
 
-    public static Path path2 = null;
+//    public static Path path2 = null;
 
 
 
@@ -551,6 +553,15 @@ public class MainActivity extends AppCompatActivity {
             //use photo send to server
             final Bitmap photo = bitmap;
 
+            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+            Uri tempUri = getImageUri(getApplicationContext(), photo);
+
+            // CALL THIS METHOD TO GET THE ACTUAL PATH
+            File finalFile = new File(getRealPathFromURI(tempUri));
+                //FacialRecognitionConfiguration.method(finalFile);
+                new FacialRecognitionConfiguration().execute(finalFile);
+
+
             //for testing
            // imageView.setImageBitmap(photo);
 
@@ -572,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         System.out.println("PIKA CHUUUU");
                         //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
-                        if (epione.ValidatePatient("patientid", photoURI)) //if is correct user
+                        if (epione.ValidatePatient("patientid", path)) //if is correct user
                         {
                             //get patient prescription
                             Prescription PatientPrescription = epione.getPrescription("patientid");
@@ -624,6 +635,7 @@ public class MainActivity extends AppCompatActivity {
                 ex.printStackTrace();
             }
             if (photoFile != null) {
+
                 photoURI = FileProvider.getUriForFile(this.getApplication().getApplicationContext(),
                         "sg.gowild.sademo.provider", photoFile);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -656,5 +668,29 @@ public class MainActivity extends AppCompatActivity {
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
+
+    public void convertBitmapToPath(Bitmap photo){
+        // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+        Uri tempUri = getImageUri(getApplicationContext(), photo);
+
+        // CALL THIS METHOD TO GET THE ACTUAL PATH
+        File finalFile = new File(getRealPathFromURI(tempUri));
+        path = Paths.get(finalFile.toURI());
+    }
+
     //========================================================================================================
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
 }

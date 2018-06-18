@@ -1,14 +1,18 @@
 package FacialRecognition;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,13 +39,17 @@ import org.json.JSONObject;
 public class FacialRecognitionConfiguration extends AsyncTask<String, Void, String> {
 
 //    private Bitmap photo;
+//    private Bitmap path;
     private Path path;
 
+
+//    public FacialRecognitionConfiguration(Bitmap path){
+//        this.path = path;
+//    }
 
     public FacialRecognitionConfiguration(Path path){
         this.path = path;
     }
-
 
 //    Bundle extras = getIntent().getExtras("picture");
 //    byte[] byteArray = extras.getByteArray("picture");
@@ -102,6 +110,8 @@ public  void postRequest() throws IOException {
 
 
         OkHttpClient client = new OkHttpClient();
+
+        System.out.println(path.toAbsolutePath() + " URI path STORED");
         //application/octet-stream
 //        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 //        RequestBody body = RequestBody.create(JSON, "{\"url\":\"https://i.imgur.com/9sAyPWE.jpg\"}");
@@ -111,10 +121,24 @@ public  void postRequest() throws IOException {
 
         byte[] bttest = new byte[0];
         try {
-            bttest = Files.readAllBytes(MainActivity.path2);
+            bttest = Files.readAllBytes(path);
+            System.out.println(bttest + "BYTEEE");
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        path.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+//        byte[] byteArray = outputStream.toByteArray();
+//        ByteArrayInputStream inputStream =
+//                new ByteArrayInputStream(outputStream.toByteArray());
+
+
+
+//        System.out.println(byteArray + " ARRAY NEW BYTEESSS");
+//        System.out.println(inputStream + " NEW BYTEESSS");
+//        System.out.println(outputStream + " NEW BYTEESSS");
 
 
 //        System.out.println(path + " TEST THE PATH");
@@ -124,6 +148,7 @@ public  void postRequest() throws IOException {
 
 
         //        RequestBody formBody = new FormBody.Builder()
+
 //                .add("url","https://i.imgur.com/9sAyPWE.jpg")
 //                .build();
         Request request = new Request.Builder()

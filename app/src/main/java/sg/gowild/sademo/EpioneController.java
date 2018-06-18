@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 
 import java.io.File;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Executors;
@@ -73,12 +74,12 @@ public class EpioneController {
      * @param pathToPhoto - taken from User -
      * @return
      */
-    public boolean ValidatePatient(String patientID, Uri pathToPhoto)
+    public boolean ValidatePatient(String patientID, Path pathToPhoto)
     {
 
 //        File finalFile = new File(getRealPathFromURI(tempUri));
-        Path path = Paths.get(pathToPhoto.getPath());
-        new FacialRecognitionConfiguration(path).execute("");
+//        Path path = Paths.get(pathToPhoto.getPath());
+        new FacialRecognitionConfiguration(pathToPhoto).execute("");
 
 
 

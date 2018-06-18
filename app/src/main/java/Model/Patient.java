@@ -199,6 +199,9 @@ public class Patient extends AsyncTask<String[], Void, List<Patient>> {
         if(strings[0][0].equalsIgnoreCase("getAllPatientDetails")){
 
             return getAllPatientDetails();
+        }else if(strings[0][0].equalsIgnoreCase("getAllPatientDetailsById")){
+            return getAllPatientDetailsById(strings[0][1].toString());
+
         }
 
 

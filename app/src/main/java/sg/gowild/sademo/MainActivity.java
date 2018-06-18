@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
 //        try {
 //
 //
-//            List<Patient> pt = new Patient().execute(new String[]{"getAllPatientDetails", "test2"}).get();
+//            List<Patient> pt = new Patient().execute(new String[]{"getAllPatientDetailsById", "1"}).get();
 //            for (int i = 0; i < pt.size(); i++) {
 //                System.out.println("PRINT from main");
 //                System.out.println(pt.get(i).getName());

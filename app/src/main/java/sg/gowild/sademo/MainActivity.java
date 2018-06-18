@@ -576,6 +576,15 @@ public class MainActivity extends AppCompatActivity {
             //use photo send to server
             final Bitmap photo = bitmap;
 
+            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+            Uri tempUri = getImageUri(getApplicationContext(), photo);
+
+            // CALL THIS METHOD TO GET THE ACTUAL PATH
+            File finalFile = new File(getRealPathFromURI(tempUri));
+                //FacialRecognitionConfiguration.method(finalFile);
+                new FacialRecognitionConfiguration().execute(finalFile);
+
+
             //for testing
            // imageView.setImageBitmap(photo);
 
@@ -681,4 +690,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //========================================================================================================
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
 }

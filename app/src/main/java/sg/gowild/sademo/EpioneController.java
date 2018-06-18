@@ -77,8 +77,8 @@ public class EpioneController {
     {
 
 //        File finalFile = new File(getRealPathFromURI(tempUri));
-        Path path = Paths.get(pathToPhoto.getPath());
-        new FacialRecognitionConfiguration(path).execute("");
+//        Path path = Paths.get(pathToPhoto.getPath());
+//        new FacialRecognitionConfiguration(path).execute("");
 
 
 

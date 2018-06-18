@@ -384,18 +384,84 @@ public class Reminder {
     }
 
 
-    public List<Reminder> getNextFiveMinuteReminder(){
-
-//        List<Reminder> todaysReminder = getAllReminderByDate()
+    public static Reminder getNextFiveMinuteReminder(){
 
 
 
 
+        Date cDate = new Date();
+        SimpleDateFormat parserer = new SimpleDateFormat("dd/MM/yyyy");
+        System.out.println(parserer.format(cDate));
 
+
+
+
+        List<Reminder> todaysReminder = getAllReminderByDate(parserer.format(cDate.getTime()));
+
+
+// second
+
+        Date timeNow = new Date();
+        SimpleDateFormat parser = new SimpleDateFormat("HHmm");
+
+        int cTime = Integer.parseInt(parser.format(timeNow.getTime()));
+
+
+
+        System.out.println(cTime);
+
+
+        for (int i = 0; i < todaysReminder.size(); i++) {
+            int dbTime = Integer.parseInt(todaysReminder.get(i).getTimeTake());
+             System.out.println(dbTime - cTime);
+
+
+
+            if ((todaysReminder.get(i).getAdhered().toString().equalsIgnoreCase("false") )&& (dbTime - cTime <= 5)) {
+
+                System.out.println("Reminder");
+                System.out.println(todaysReminder.get(i).getReminderId());
+                System.out.println(todaysReminder.get(i).getTimeTake());
+                System.out.println(todaysReminder.get(i).getDateTake());
+                System.out.println(todaysReminder.get(i).getPrescriptionId());
+                System.out.println(todaysReminder.get(i).getPatientId());
+
+                return todaysReminder.get(i);
+
+
+            }
+        }
         return null;
+
+
+
+
+
     }
 
     public static void main(String[] args) {
+        Reminder rem = getNextFiveMinuteReminder();
+
+        if (rem==null){
+            System.out.println("Empty");
+        }else{
+            System.out.println("----------------");
+            System.out.println(rem.getPatientId());
+            System.out.println("Pat Id");
+            System.out.println(rem.getPrescriptionId());
+            System.out.println("Pre ID");
+            System.out.println(rem.getDateTake());
+            System.out.println("Date take");
+            System.out.println(rem.getTimeTake());
+            System.out.println("Time take");
+            System.out.println(rem.getReminderId());
+            System.out.println("reminder id");
+            System.out.println(rem.getAdhered());
+            System.out.println("Adhered");
+        }
+
+
+
 //        insertDataIntoReminder("1", "1", 3, 3, 30);
 
 //        List<Reminder> arr = getAllReminderByDate("11/6/2018");
@@ -437,16 +503,11 @@ public class Reminder {
 //
 //        }
 
-        Date timeNow = new Date();
-        SimpleDateFormat parser = new SimpleDateFormat("HHmm");
-        Date startt = null;
 
-//        try {
-//            startt = parser.parse("1550");
-//            System.out.println(startt.after(parser.format(timeNow.getTime())));
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+
+
+
+
 
 
 

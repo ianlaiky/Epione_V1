@@ -20,6 +20,7 @@ public class Patient {
 
     int patientId;
     String name;
+    String faceId;
 
     public int getPatientId() {
         return patientId;
@@ -37,9 +38,18 @@ public class Patient {
         this.name = name;
     }
 
-    public Patient(int patientId, String name) {
+    public String getFaceId() {
+        return faceId;
+    }
+
+    public void setFaceId(String faceId) {
+        this.faceId = faceId;
+    }
+
+    public Patient(int patientId, String name, String faceId) {
         this.patientId = patientId;
         this.name = name;
+        this.faceId = faceId;
     }
 
     public static JsonArray getRequestBuilder(String queryMethod, String paramName, String param) {
@@ -135,6 +145,7 @@ public class Patient {
             System.out.println("FROM MAIN");
             System.out.println(paList.get(i).getName());
             System.out.println(paList.get(i).getPatientId());
+            System.out.println(paList.get(i).getFaceId());
         }
 
 
@@ -149,7 +160,7 @@ public class Patient {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Patient paObj = new Patient(jobj.get("patientId").getAsInt(),jobj.get("name").getAsString());
+            Patient paObj = new Patient(jobj.get("patientId").getAsInt(),jobj.get("name").getAsString(),jobj.get("faceId").getAsString());
 
             allpat.add(paObj);
 
@@ -166,7 +177,7 @@ public class Patient {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Patient paObj = new Patient(jobj.get("patientId").getAsInt(),jobj.get("name").getAsString());
+            Patient paObj = new Patient(jobj.get("patientId").getAsInt(),jobj.get("name").getAsString(),jobj.get("faceId").getAsString());
 
             allpat.add(paObj);
 

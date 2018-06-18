@@ -545,7 +545,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bitmap =null;
             try {
                  bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),photoURI);
-                 bitmap = RotateBitmap(bitmap,90);
+                 bitmap = RotateBitmap(bitmap,-90);
                 imageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -557,9 +557,9 @@ public class MainActivity extends AppCompatActivity {
             Uri tempUri = getImageUri(getApplicationContext(), photo);
 
             // CALL THIS METHOD TO GET THE ACTUAL PATH
-            File finalFile = new File(getRealPathFromURI(tempUri));
+            final File finalFile = new File(getRealPathFromURI(tempUri));
                 //FacialRecognitionConfiguration.method(finalFile);
-                new FacialRecognitionConfiguration().execute(finalFile);
+
 
 
             //for testing
@@ -583,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         System.out.println("PIKA CHUUUU");
                         //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
-                        if (epione.ValidatePatient("patientid", path)) //if is correct user
+                        if (epione.ValidatePatient("patientid", finalFile)) //if is correct user
                         {
                             //get patient prescription
                             Prescription PatientPrescription = epione.getPrescription("patientid");
@@ -666,16 +666,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void AlertUser(String text) {
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-    }
-
-
-    public void convertBitmapToPath(Bitmap photo){
-        // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-        Uri tempUri = getImageUri(getApplicationContext(), photo);
-
-        // CALL THIS METHOD TO GET THE ACTUAL PATH
-        File finalFile = new File(getRealPathFromURI(tempUri));
-        path = Paths.get(finalFile.toURI());
     }
 
     //========================================================================================================

@@ -105,16 +105,16 @@ public class EpioneController {
      * Check if patient is who they say they are
      *
      * @param patientID
-     * @param pathToPhoto - taken from User -
+     * @param imageFile - taken from User -
      * @return
      */
-    public boolean ValidatePatient(String patientID, Uri pathToPhoto)
+    public boolean ValidatePatient(String patientID, File imageFile)
     {
 
 //        File finalFile = new File(getRealPathFromURI(tempUri));
 //        Path path = Paths.get(pathToPhoto.getPath());
 //        new FacialRecognitionConfiguration(path).execute("");
-
+        new FacialRecognitionConfiguration().execute(imageFile);
 
 
         boolean isValidUser = true;

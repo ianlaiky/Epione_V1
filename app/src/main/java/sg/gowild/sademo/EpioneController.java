@@ -5,9 +5,9 @@ import android.graphics.Bitmap;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import Hardware.EV3Configuration;
 import Model.Prescription;
 
 //interacts with UI,database and dialogflow
@@ -16,6 +16,8 @@ public class EpioneController {
      ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public MainActivity app;
+
+    private EV3Configuration ev3Box = new EV3Configuration();
 
     public EpioneController(MainActivity app)
     {
@@ -72,6 +74,7 @@ public class EpioneController {
         boolean isValidUser = true;
         //step1. verify patient through facial recogntion
 
+
         return isValidUser;
     }
 
@@ -84,11 +87,13 @@ public class EpioneController {
     public void openBox()
     {
         //open box
+        ev3Box.GetRequest("out");
     }
 
     public void closeBox()
     {
         //close box
+        ev3Box.GetRequest("in");
     }
 
 }

@@ -2,6 +2,7 @@ package sg.gowild.sademo;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -9,12 +10,14 @@ import android.graphics.Bitmap;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +38,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,8 +71,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView textView;
     private ImageView imageView;
 
+    //for camera
     private static final int CAMERA_REQUEST = 1888;
-    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    private String imageFilePath;
+    private Uri photoURI;
 
     // ASR Variables
     private SpeechRecognizer speechRecognizer;
@@ -116,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     //==== SET UP CONFIGURATIONS ============================================================================
     private void setUpConfigurations() {
         setupViews();
@@ -135,16 +141,10 @@ public class MainActivity extends AppCompatActivity {
 //
 
 
-
-
-
-
-
         // TODO: Setup Views if need be
         button = findViewById(R.id.button);
         ev3ButtonIn = findViewById(R.id.ev3ButtonIn);
         ev3ButtonOut = findViewById(R.id.ev3Buttonout);
-
 
 
         textView = findViewById(R.id.textview);
@@ -154,15 +154,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //set false to disable the hotword detection
-               // shouldDetect = false;
-               // startAsr();
+                // shouldDetect = false;
+                // startAsr();
                 //Take Picture
-
 
 
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
-
 
 
             }
@@ -174,8 +172,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                 EV3Configuration test = new EV3Configuration();
-               test.GetRequest("in");
-                Log.e("te","RUNNING eev3");
+                test.GetRequest("in");
+                Log.e("te", "RUNNING eev3");
 
             }
         });
@@ -185,11 +183,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EV3Configuration test = new EV3Configuration();
                 test.GetRequest("out");
-                Log.e("te","RUNNING eev3");
+                Log.e("te", "RUNNING eev3");
             }
         });
-
-
 
 
     }
@@ -237,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onEndOfSpeech() {
-                    //when it has dectect end of speech
+                //when it has dectect end of speech
             }
 
             @Override
@@ -252,13 +248,10 @@ public class MainActivity extends AppCompatActivity {
             public void onResults(Bundle results) {
                 //Get results from user speech
                 List<String> texts = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                if (texts == null || texts.isEmpty())
-                {
+                if (texts == null || texts.isEmpty()) {
                     textView.setText("Please Try again.");
-                }
-                else
-                    {
-                        String text = texts.get(0);
+                } else {
+                    String text = texts.get(0);
 
 
 //                        String response;
@@ -270,20 +263,20 @@ public class MainActivity extends AppCompatActivity {
 //                            {
 //                                response = "I don't know what you are saying";
 //                            }
-                        //NLU
-                        startNlu(text);
+                    //NLU
+                    startNlu(text);
 
-                            //display text
-                        textView.setText(text);
+                    //display text
+                    textView.setText(text);
 
-                        //speak out response to user
-                        //startTts(response);
-                    }
+                    //speak out response to user
+                    //startTts(response);
+                }
             }
 
             @Override
             public void onPartialResults(Bundle partialResults) {
-                   //returns part of the speech
+                //returns part of the speech
             }
 
             @Override
@@ -295,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
 
     /*TO ENABLE TEXT TO SPEECH */
     private void setupTts() {
-        textToSpeech = new TextToSpeech(this,null);
+        textToSpeech = new TextToSpeech(this, null);
     }
 
     //similar to RESTFUL Request
@@ -307,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
                 AIConfiguration.SupportedLanguages.English);
         aiDataService = new AIDataService(aiConfiguration);
     }
-
 
 
     private void setupHotword() {
@@ -362,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Start TTS
         //TextToSpeech.QUEUE_FLUSH - remove appening words when speaking
-        textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH,null);
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 
         //while text to speech is running
         // have the start hotword started
@@ -434,7 +426,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void startNlu(final String text) {
         Runnable runnable = new Runnable() {
             @Override
@@ -457,12 +448,12 @@ public class MainActivity extends AppCompatActivity {
                     String originalSpeech = fulfillment.getSpeech();
 
                     String intentname = result.getMetadata().getIntentName();
-                    callIntent(intentname,originalSpeech);
+                    callIntent(intentname, originalSpeech);
 
-                   // startTts(responseText);
+                    // startTts(responseText);
 
                 } catch (AIServiceException e) {
-                    Log.e("nlu",e.getMessage(),e);
+                    Log.e("nlu", e.getMessage(), e);
                 }
             }
         };
@@ -470,17 +461,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void callIntent(String intentname,String originalSpeech)
-    {
+
+
+    public void callIntent(String intentname, String originalSpeech) {
         //if the intent is to give user medicine
-        if(intentname.equalsIgnoreCase("medicine.give"))
-        {
+        if (intentname.equalsIgnoreCase("medicine.give")) {
             //step 1.first check if is time to give medicine
 
             //step2. tell user, to scan face to verify
-            textToSpeech.speak("Okay,Let me scan your face",TextToSpeech.QUEUE_FLUSH,null);
-            while (textToSpeech.isSpeaking())
-            {
+            textToSpeech.speak("Okay,Let me scan your face", TextToSpeech.QUEUE_FLUSH, null);
+            while (textToSpeech.isSpeaking()) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -489,11 +479,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //step3.verify user first by facial recognition
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, CAMERA_REQUEST);
-        }
-        else if(intentname.equalsIgnoreCase("medicine.close"))
-        {
+            startCameraIntent();
+
+        } else if (intentname.equalsIgnoreCase("medicine.close")) {
             startTts("Okay,Closing Cabinet. I will remind you for when's its time for your next medicine");
 
             //update remainder table
@@ -505,32 +493,41 @@ public class MainActivity extends AppCompatActivity {
             //once user takes medicine already
             //restart checking remainder
             epione.checkRemainder("1");
-        }
-        else
-            {
-                startTts(originalSpeech);
+        } else {
+            startTts(originalSpeech);
 
-                //restart scheduling remainder
-                //epione.checkRemainder("1");
-            }
+            //restart scheduling remainder
+            //epione.checkRemainder("1");
+        }
 
     }
+
+
+
+
+
+
+
 
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //check if is from photo
-        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
-
-
+        if (requestCode == CAMERA_REQUEST) {
 
             //photo taken
-            final Bitmap photo = (Bitmap) data.getExtras().get("data");
-
-
+            Bitmap bitmap =null;
+            try {
+                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),photoURI);
+                imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //use photo send to server
+            final Bitmap photo = bitmap;
             //for testing
-            imageView.setImageBitmap(photo);
+           // imageView.setImageBitmap(photo);
 
 //            ByteArrayOutputStream stream = new ByteArrayOutputStream();
 //            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -549,7 +546,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
-                    if(epione.ValidatePatient("patientid",photo)) //if is correct user
+                    if (epione.ValidatePatient("patientid", photo)) //if is correct user
                     {
                         //get patient prescription
                         Prescription PatientPrescription = epione.getPrescription("patientid");
@@ -575,57 +572,56 @@ public class MainActivity extends AppCompatActivity {
             Threadings.runInBackgroundThread(runnable);
 
 
-
-
         }
     }
 
 
-
-    public void AlertUser(String text)
+    private void startCameraIntent()
     {
-        textToSpeech.speak(text,TextToSpeech.QUEUE_FLUSH,null);
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if(cameraIntent.resolveActivity(getPackageManager()) != null){
+            //Create a file to store the image
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                ex.printStackTrace();
+            }
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(this.getApplication().getApplicationContext(),
+                        "sg.gowild.sademo.provider", photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        photoURI);
+                startActivityForResult(cameraIntent,
+                        100);
+            }
+        }
     }
 
 
+    private File createImageFile() throws IOException {
+        String timeStamp =
+                new SimpleDateFormat("yyyyMMdd_HHmmss",
+                        Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + "_";
+        File storageDir =
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        imageFilePath = image.getAbsolutePath();
+        return image;
+    }
+
+
+    public void AlertUser(String text) {
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
 
     //========================================================================================================
-
-//    private String getWeather() {
-//        //okay http library
-//
-//        OkHttpClient okHttpClient = new OkHttpClient();
-//        Request request = new Request.Builder()
-//                .url("https://api.data.gov.sg/v1/environment/2-hour-weather-forecast")
-//                .header("accept","application/json")
-//                .build();
-//
-//
-//        try {
-//            Response response = okHttpClient.newCall(request).execute();
-//            String responseBody = response.body().string();
-//
-//            JSONObject jsonObject = new JSONObject(responseBody);
-//            JSONArray forecasts = jsonObject.getJSONArray("items")
-//                    .getJSONObject(0)
-//                    .getJSONArray("forecasts");
-//
-//            for (int i = 0;i<forecasts.length();i++)
-//            {
-//                JSONObject forecastsObject = forecasts.getJSONObject(i);
-//                String area = forecastsObject.getString("area");
-//
-//                if (area.equalsIgnoreCase("clementi"))
-//                {
-//                    String forecast = forecastsObject.getString("forecasts");
-//                    return "The weather in clementi is now " + forecast;
-//                }
-//            }
-//        } catch (IOException e) {
-//            Log.e("weather",e.getMessage(),e);
-//        } catch (JSONException e) {
-//            Log.e("weather",e.getMessage(),e);
-//        }
-//        return "No weather info";
-//    }
 }

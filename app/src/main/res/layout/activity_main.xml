@@ -27,14 +27,6 @@
         android:layout_marginBottom="221dp"
         android:text="Press Me" />
 
-    <ImageView
-        android:id="@+id/imageview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="106dp" />
-
     <Button
         android:id="@+id/ev3ButtonIn"
         android:layout_width="wrap_content"
@@ -51,5 +43,13 @@
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/textview"
         android:text="Ev3Button OUT" />
+
+
+    <ImageView
+        android:id="@+id/imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:maxHeight="50pt"
+        android:maxWidth="50pt"/>
 
 </RelativeLayout>

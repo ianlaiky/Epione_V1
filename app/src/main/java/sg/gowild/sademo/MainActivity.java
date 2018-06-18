@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap pic;
 
     //for camera
-    private static final int CAMERA_REQUEST = 1888;
+    private static final int CAMERA_REQUEST = 100;
     private String imageFilePath;
     private Uri photoURI;
 

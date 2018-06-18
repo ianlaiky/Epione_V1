@@ -573,6 +573,7 @@ public class MainActivity extends AppCompatActivity {
             }
             //use photo send to server
             final Bitmap photo = bitmap;
+
             //for testing
            // imageView.setImageBitmap(photo);
 
@@ -594,7 +595,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         System.out.println("PIKA CHUUUU");
                         //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
-                        if (epione.ValidatePatient("patientid", photo)) //if is correct user
+                        if (epione.ValidatePatient("patientid", photoURI)) //if is correct user
                         {
                             //get patient prescription
                             Prescription PatientPrescription = epione.getPrescription("patientid");
@@ -646,52 +647,6 @@ public class MainActivity extends AppCompatActivity {
                         100);
             }
         }
-    }
-
-    public  void postRequest() throws IOException {
-
-        System.out.println("YOLOOO");
-        OkHttpClient client = new OkHttpClient();
-        //application/octet-stream
-//        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-//        RequestBody body = RequestBody.create(JSON, "{\"url\":\"https://i.imgur.com/9sAyPWE.jpg\"}");
-
-        //        File file = new File("D:\\AndroidStudio\\Epione_V1\\app\\src\\main\\assets\\images\\9sAyPWE.jpg");
-//    Path path = Paths.get("D:\\AndroidStudio\\Epione_V1\\app\\src\\main\\assets\\images\\9sAyPWE.jpg");
-
-        byte[] bttest = Files.readAllBytes(MainActivity.path2);
-
-
-//        System.out.println(path + " TEST THE PATH");
-
-        MediaType fdf = MediaType.parse("application/octet-stream");
-        RequestBody body = RequestBody.create(fdf, bttest);
-
-
-        //        RequestBody formBody = new FormBody.Builder()
-//                .add("url","https://i.imgur.com/9sAyPWE.jpg")
-//                .build();
-        Request request = new Request.Builder()
-                .url("https://southeastasia.api.cognitive.microsoft.com/face/v1.0/detect")
-
-                .post(body)
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Ocp-Apim-Subscription-Key", "f697d347019b4c74976466006f62d811")
-                .build();
-
-        try
-
-        {
-            Response response = client.newCall(request).execute();
-            System.out.println(response.body().string());
-            // Do something with the response.
-        } catch(
-                IOException e)
-
-        {
-            e.printStackTrace();
-        }
-
     }
 
     private File createImageFile() throws IOException {

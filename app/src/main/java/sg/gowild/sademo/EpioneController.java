@@ -2,6 +2,7 @@ package sg.gowild.sademo;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -65,10 +66,10 @@ public class EpioneController {
      * Check if patient is who they say they are
      *
      * @param patientID
-     * @param photo - taken from User -
+     * @param pathToPhoto - taken from User -
      * @return
      */
-    public boolean ValidatePatient(String patientID, Bitmap photo)
+    public boolean ValidatePatient(String patientID, Uri pathToPhoto)
     {
 
         boolean isValidUser = true;

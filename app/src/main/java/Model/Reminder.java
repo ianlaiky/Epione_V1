@@ -1,5 +1,7 @@
 package Model;
 
+import android.os.AsyncTask;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -17,7 +19,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class Reminder {
+public class Reminder extends AsyncTask<String[],Void,List<Reminder>>{
 
     int reminderId;
     String dateTake;
@@ -438,6 +440,41 @@ public class Reminder {
 
 
     }
+
+
+
+
+    @Override
+    protected List<Reminder> doInBackground(String[]... strings) {
+        System.out.println(strings[0][0]);
+        System.out.println(strings[0][1]);
+
+
+
+        if(strings[0][0].equalsIgnoreCase("getAllReminder")){
+
+            return getAllReminder();
+        }else if(strings[0][0].equalsIgnoreCase("getAllReminderById")){
+            return getAllReminderById(strings[0][1].toString());
+        }else if(strings[0][0].equalsIgnoreCase("getAllReminderByPatientId")){
+            return getAllReminderByPatientId(strings[0][1].toString());
+        }else if(strings[0][0].equalsIgnoreCase("getAllReminderByDate")){
+            return getAllReminderByDate(strings[0][1].toString());
+        }else if(strings[0][0].equalsIgnoreCase("updateReminderPrescriptionTaken")){
+            updateReminderPrescriptionTaken(strings[0][1].toString(),strings[0][2].toString());
+        }else if(strings[0][0].equalsIgnoreCase("insertDataIntoReminder")){
+            insertDataIntoReminder(strings[0][1].toString(),strings[0][2].toString(),Integer.parseInt(strings[0][3].toString()),Integer.parseInt(strings[0][4].toString()),Integer.parseInt(strings[0][5].toString()));
+        }else if(strings[0][0].equalsIgnoreCase("getNextFiveMinuteReminder")){
+            List<Reminder> temp = new ArrayList<>();
+            temp.add(getNextFiveMinuteReminder());
+            return temp;
+        }
+
+        return null;
+    }
+
+
+
 
     public static void main(String[] args) {
         Reminder rem = getNextFiveMinuteReminder();

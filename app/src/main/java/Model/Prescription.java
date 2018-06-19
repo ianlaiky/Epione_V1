@@ -1,5 +1,7 @@
 package Model;
 
+import android.os.AsyncTask;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,7 +15,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class Prescription {
+public class Prescription extends AsyncTask<String[], Void, List<Prescription>> {
 
 
     int prescriptionId;
@@ -34,6 +36,10 @@ public class Prescription {
         this.quantity = quantity;
         this.remarks = remarks;
         this.precedenceOrder = precedenceOrder;
+    }
+
+    public Prescription(){
+
     }
 
     public int getPrescriptionId() {
@@ -241,6 +247,32 @@ public class Prescription {
 
         }
 
+    }
+
+    @Override
+    protected List<Prescription> doInBackground(String[]... strings) {
+
+
+        System.out.println(strings[0][0]);
+        System.out.println(strings[0][1]);
+
+
+        if(strings[0][0].equalsIgnoreCase("getAllPrescription")){
+
+            return getAllPrescription();
+        }else if(strings[0][0].equalsIgnoreCase("getAllPrescriptionById")){
+            return getAllPrescriptionById(strings[0][1].toString());
+
+        }else if(strings[0][0].equalsIgnoreCase("getAllPrescriptionByPatientId")){
+            return getAllPrescriptionByPatientId(strings[0][1].toString());
+        }else if(strings[0][0].equalsIgnoreCase("getAllPrescriptionByMedId")){
+
+            return getAllPrescriptionByMedId(strings[0][1].toString());
+
+        }
+
+
+        return null;
     }
 
 

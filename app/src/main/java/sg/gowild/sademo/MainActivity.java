@@ -589,7 +589,7 @@ public class MainActivity extends AppCompatActivity {
                             Prescription PatientPrescription = epione.getPrescription("patientid");
                             epione.getPatient();
 
-                            startTts("Please take the panadol in Box 1 and take 2 pills only");
+//                            startTts("Please take the panadol in Box 1 and take 2 pills only");
                             //then read out instruction to user
 //                        textToSpeech.speak("Please take the panadol in Box 1 and take 2 pills only ",TextToSpeech.QUEUE_FLUSH,null);
 //                        while (textToSpeech.isSpeaking())
@@ -666,6 +666,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void AlertUser(String text) {
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
+    public void AlertUserAddOn(String text){
+        textToSpeech.speak(text, TextToSpeech.QUEUE_ADD,null);
     }
 
     //========================================================================================================

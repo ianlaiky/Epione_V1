@@ -118,6 +118,11 @@ public class EpioneController {
 
 
         boolean isValidUser = true;
+        if(isValidUser){
+            app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
+            app.AlertUserAddOn("Please take the panadol in Box 1 and take 2 pills only");
+
+        }
         //step1. verify patient through facial recogntion
 
 

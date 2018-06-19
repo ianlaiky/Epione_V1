@@ -260,8 +260,14 @@ public class Prescription extends AsyncTask<String[], Void, List<Prescription>> 
         if(strings[0][0].equalsIgnoreCase("getAllPrescription")){
 
             return getAllPrescription();
+        }else if(strings[0][0].equalsIgnoreCase("getAllPrescriptionById")){
+            return getAllPrescriptionById(strings[0][1].toString());
+
         }else if(strings[0][0].equalsIgnoreCase("getAllPrescriptionByPatientId")){
             return getAllPrescriptionByPatientId(strings[0][1].toString());
+        }else if(strings[0][0].equalsIgnoreCase("getAllPrescriptionByMedId")){
+
+            return getAllPrescriptionByMedId(strings[0][1].toString());
 
         }
 

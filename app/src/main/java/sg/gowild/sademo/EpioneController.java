@@ -151,6 +151,21 @@ public class EpioneController {
 
     public static Prescription getPrescription(String patientID)
     {
+        try {
+
+
+            List<Prescription> pt = new Prescription().execute(new String[]{"getAllPrescriptionByPatientId", "1"}).get();
+            for (int i = 0; i < pt.size(); i++) {
+                System.out.println(pt.get(i).getDosage());
+                System.out.println(pt.get(i).getInstruction());
+                System.out.println(pt.get(i).getRemarks());
+                return pt.get(i);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

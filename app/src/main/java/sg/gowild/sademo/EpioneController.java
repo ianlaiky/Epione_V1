@@ -144,29 +144,29 @@ public class EpioneController {
         }
     }
 
-    public  void verifiedUser(){
+//    public  void verifiedUser(){
+//
+//        if(isValidUser){
+//            //verification succeed
+//            //app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
+//            app.AlertUserAddOn("Please take the panadol in Box 1 and take 2 pills only");
+//            //add silence to pause the conversation
+//            app.AddPauseInTTS();
+//            medicalAherence();
+//
+//        }else if (!isValidUser){
+//            //verification fails
+//            app.AlertUser("I can't recognise who you are");
+//        }
+//    }
 
-        if(isValidUser){
-            //verification succeed
-            //app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
-            app.AlertUserAddOn("Please take the panadol in Box 1 and take 2 pills only");
-            //add silence to pause the conversation
-            app.AddPauseInTTS();
-            medicalAherence();
 
-        }else if (!isValidUser){
-            //verification fails
-            app.AlertUser("I can't recognise who you are");
-        }
-    }
-
-
-    public  Prescription getPrescription(String patientID)
+    public  Prescription getPatientPrescription(String patientID)
     {
         try {
 
 
-            List<Prescription> pt = new Prescription().execute(new String[]{"getAllPrescriptionByPatientId", "1"}).get();
+            List<Prescription> pt = new Prescription().execute(new String[]{"getAllPrescriptionByPatientId", patientID}).get();
             for (int i = 0; i < pt.size(); i++) {
                 System.out.println(pt.get(i).getDosage());
                 System.out.println(pt.get(i).getInstruction());
@@ -189,12 +189,12 @@ public class EpioneController {
         ev3Box.GetRequest("out");
     }
 
-    public  void medicalAherence(){
-        getPrescription("patientId");
-        //getPatient();
-        System.out.println("Epione open box");
-        openBox();
-    }
+//    public  void medicalAherence(){
+//        getPrescription("patientId");
+//        //getPatient();
+//        System.out.println("Epione open box");
+//        openBox();
+//    }
 
     public void closeBox(String remindID)
     {

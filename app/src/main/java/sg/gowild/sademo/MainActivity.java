@@ -559,10 +559,18 @@ public class MainActivity extends AppCompatActivity {
 
 
                             //get patient prescription
-                            Prescription PatientPrescription = epione.getPrescription("patientid");
+                            String pid = String.valueOf(Patient.getPatientId());
+                            Prescription PatientPrescription = epione.getPatientPrescription(pid);
 
                             //then read out instruction to user
-                        textToSpeech.speak("Please take the panadol in Box 1 and take 2 pills only ",TextToSpeech.QUEUE_FLUSH,null);
+                            //int timeToTakePerDay = PatientPrescription.getInstruction();
+                            int dosage = PatientPrescription.getDosage();
+                            String remarks = PatientPrescription.getRemarks();
+
+
+
+
+                        textToSpeech.speak(remarks,TextToSpeech.QUEUE_FLUSH,null);
                         while (textToSpeech.isSpeaking())
                         {
                             try {

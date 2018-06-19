@@ -74,6 +74,6 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerInParent="true"
-        android:visibility="invisible"
+        android:visibility="visible"
         />
 </RelativeLayout>

@@ -502,7 +502,7 @@ public class Reminder extends AsyncTask<String[],Void,List<Reminder>>{
 
 
 
-//        insertDataIntoReminder("1", "1", 3, 3, 30);
+//        insertDataIntoReminder("1", "1", 2, 2, 30);
 
 //        List<Reminder> arr = getAllReminderByDate("11/6/2018");
 //

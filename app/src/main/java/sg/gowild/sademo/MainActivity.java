@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
         textView = findViewById(R.id.textview);
         imageView = findViewById(R.id.imageview);
+        imageView.setImageResource(R.drawable.xiaobaigeneral);
 
         progressBar = findViewById(R.id.progressbar);
 
@@ -592,6 +593,8 @@ public class MainActivity extends AppCompatActivity {
 
                             //open cabinet box
                             System.out.println("Epione open box");
+
+                        //TODO
                             //epione.openBox();
                         }
                     }

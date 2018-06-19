@@ -56,6 +56,7 @@ import FacialRecognition.FacialRecognitionConfiguration;
 import Hardware.EV3Configuration;
 import Model.Patient;
 import Model.Prescription;
+import Model.Reminder;
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import ai.api.AIServiceException;
@@ -111,7 +112,9 @@ public class MainActivity extends AppCompatActivity {
     //Controller
     private EpioneController epione = new EpioneController(this);
 
-//    public static Path path2 = null;
+    //will get patient data once have a reminder
+    public Patient Patient;
+    public Reminder Reminder;
 
 
 
@@ -143,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO:FUNCTION TO CONSTANTLY CHECK FOR REMAINDER
         //AND ALERT TO XIAOBAI
         //uncomment once everything is done
-        epione.checkRemainder("patient id");
+        epione.checkRemainder();
 
 
     }
@@ -165,8 +168,6 @@ public class MainActivity extends AppCompatActivity {
     private void setupViews() {
         // Setting up db
 
-
-
         // TODO: Setup Views if need be
         button = findViewById(R.id.button);
         ev3ButtonIn = findViewById(R.id.ev3ButtonIn);
@@ -184,14 +185,10 @@ public class MainActivity extends AppCompatActivity {
                 // startAsr();
                 //Take Picture
 
-
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
-
-
             }
         });
 
+        //remove later
         ev3ButtonIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //remove later
         ev3ButtonOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -510,11 +508,17 @@ public class MainActivity extends AppCompatActivity {
         } else if (intentname.equalsIgnoreCase("medicine.close")) {
             startTts("Okay,Closing Cabinet. I will remind you for when's its time for your next medicine");
 
+            //close cabinet box
+            System.out.println("Epione close box");
+            //epione.closeBox();
+
+
             //update remainder table
 
             //update prescription table
 
-            //close cabinet box
+
+
 
             //once user takes medicine already
             //restart checking remainder
@@ -527,13 +531,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-//    public Uri getImageUri(Context inContext, Bitmap inImage) {
-//        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-//        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-//        return Uri.parse(path);
-//    }
 
 
     @Override
@@ -558,52 +555,33 @@ public class MainActivity extends AppCompatActivity {
 
             // CALL THIS METHOD TO GET THE ACTUAL PATH
             final File finalFile = new File(getRealPathFromURI(tempUri));
-                //FacialRecognitionConfiguration.method(finalFile);
 
-
-
-            //for testing
-           // imageView.setImageBitmap(photo);
-
-//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//            photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//            byte[] byteArray = stream.toByteArray();
-//            photo.recycle();
-//
-//            FacialRecognitionConfiguration.postRequest(byteArray);
-
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
 
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        System.out.println("PIKA CHUUUU");
                         //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
-                        if (epione.ValidatePatient("patientid", finalFile)) //if is correct user
+                        if (epione.ValidatePatient(Patient, finalFile)) //if is correct user
                         {
-                            //get patient prescription
-//                            Prescription PatientPrescription = epione.getPrescription("patientid");
-//                            epione.getPatient();
 
-//                            startTts("Please take the panadol in Box 1 and take 2 pills only");
+
+                            //get patient prescription
+                            Prescription PatientPrescription = epione.getPrescription("patientid");
+
                             //then read out instruction to user
-//                        textToSpeech.speak("Please take the panadol in Box 1 and take 2 pills only ",TextToSpeech.QUEUE_FLUSH,null);
-//                        while (textToSpeech.isSpeaking())
-//                        {
-//                            try {
-//                                Thread.sleep(1000);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
+                        textToSpeech.speak("Please take the panadol in Box 1 and take 2 pills only ",TextToSpeech.QUEUE_FLUSH,null);
+                        while (textToSpeech.isSpeaking())
+                        {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
                             //open cabinet box
-//                            System.out.println("Epione open box");
-//                            epione.openBox();
+                            System.out.println("Epione open box");
+                            //epione.openBox();
                         }
                     }
                 };

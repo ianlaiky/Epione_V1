@@ -22,13 +22,20 @@ import Model.Reminder;
 //interacts with UI,database and dialogflow
 public class EpioneController {
 
-     ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-     public static boolean isValidUser;
 
-    public static MainActivity app;
 
-    private static EV3Configuration ev3Box = new EV3Configuration();
+
+
+    public  MainActivity app;
+    public ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private EV3Configuration ev3Box = new EV3Configuration();
+
+    private Patient PatientExecutor = new Patient();
+    private Reminder ReminderExecutor = new Reminder();
+    private FacialRecognitionConfiguration FRExecutor = new FacialRecognitionConfiguration();
+
+    public  boolean isValidUser;
 
     public EpioneController(MainActivity app)
     {
@@ -37,13 +44,14 @@ public class EpioneController {
     }
 
 
-    public static Patient getPatient()
+    public  Patient getPatient(int patientID)
     {
+        String pid = String.valueOf(patientID);
 
         try {
 
 
-            List<Patient> pt = new Patient().execute(new String[]{"getAllPatientDetailsById", "1"}).get();
+            List<Patient> pt = PatientExecutor.execute(new String[]{"getAllPatientDetailsById", pid}).get();
             for (int i = 0; i < pt.size(); i++) {
                 System.out.println("haahahahahhahahah");
                 System.out.println(pt.get(i).getName());
@@ -64,11 +72,11 @@ public class EpioneController {
     *  Check remainder for patient for every 5 minutes
     *  And alert Patient when it is to remind patient
     * */
-    public void checkRemainder(String patientID)
+    public void checkRemainder()
     {
         executor = Executors.newSingleThreadScheduledExecutor();
 
-        System.out.println("CHECKING REMAINDER FOR PATIENT: " + patientID);
+        System.out.println("CHECKING REMAINDER FOR PATIENT:");
 
         //call remainder database and check
         Runnable helloRunnable = new Runnable() {
@@ -78,14 +86,20 @@ public class EpioneController {
                // count ++;
                // System.out.println("Calling remainder");
                 try {
-                    List<Reminder> reminders = new Reminder().execute(new String[]{"getNextFiveMinuteReminder"}).get();
+                    List<Reminder> reminders = ReminderExecutor.execute(new String[]{"getNextFiveMinuteReminder"}).get();
                     System.out.println("checking remainder");
                     if(reminders.get(0) != null) //if have remainder
                     {   System.out.println("executor stop");
                         executor.shutdown();
 
                         //WILL ALERT USER IN UI
-                        app.AlertUser("Alert Alert, TIME TO TAKE MEDICINE !! for patient : "+ reminders.get(0).getPatientId());
+                        //PASS PATIENT ID TO MAIN ACTIVITY
+                        int patientId = reminders.get(0).getPatientId();
+                        Patient pt = getPatient(patientId);
+                        app.Reminder = reminders.get(0);
+                        app.Patient = pt;
+
+                        app.AlertUser("Alert Alert, TIME TO TAKE MEDICINE !! for patient : "+ patientId );
                     }
 
                 } catch (InterruptedException e) {
@@ -100,43 +114,41 @@ public class EpioneController {
 
             }
         };
-        executor.scheduleAtFixedRate(helloRunnable, 0, 10, TimeUnit.SECONDS);//every 5 minute
+        executor.scheduleAtFixedRate(helloRunnable, 0, 10, TimeUnit.SECONDS);//TODO: every 5 minute
     }
 
 
     /**TODO:ADD FACIAL RECOGNITON API
      * Check if patient is who they say they are
      *
-     * @param patientID
-     * @param imageFile - taken from User -
-     * @return
+     * @param pt - use patient  to get face id from patient
+     * @param imageFile - taken from User camera -
+     * @return isValidUser - to determine if user matches patient for authentication
      */
-    public boolean ValidatePatient(String patientID, File imageFile)
+    public boolean ValidatePatient(Patient pt, File imageFile)
     {
 
 //        File finalFile = new File(getRealPathFromURI(tempUri));
 //        Path path = Paths.get(pathToPhoto.getPath());
 //        new FacialRecognitionConfiguration(path).execute("");
-        new FacialRecognitionConfiguration().execute(imageFile,getPatient().getFaceId());
+        try {
+            boolean isValid = FRExecutor.execute(imageFile,pt.getFaceId()).get();
+            return isValidUser;
 
-
-//        isValidUser = true;
-//        if(isValidUser){
-//            System.out.println(isValidUser + " VERIFYYYY ?");
-//            app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
-//            app.AlertUserAddOn("Please take the panadol in Box 1 and take 2 pills only");
-//
-//        }
-        //step1. verify patient through facial recogntion
-
-
-        return isValidUser;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-    public static void verifiedUser(){
+
+    public  void verifiedUser(){
 
         if(isValidUser){
             //verification succeed
-            app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
+            //app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
             app.AlertUserAddOn("Please take the panadol in Box 1 and take 2 pills only");
             //add silence to pause the conversation
             app.AddPauseInTTS();
@@ -149,21 +161,24 @@ public class EpioneController {
     }
 
 
-    public static Prescription getPrescription(String patientID)
+    public  Prescription getPrescription(String patientID)
     {
+
+
+
         return null;
     }
 
-    public static void openBox()
+    public  void openBox()
     {
         //open box
         app.AlertUserAddOn("Opening box 1");
         ev3Box.GetRequest("out");
     }
 
-    public static void medicalAherence(){
+    public  void medicalAherence(){
         getPrescription("patientId");
-        getPatient();
+        //getPatient();
         System.out.println("Epione open box");
         openBox();
     }
@@ -173,7 +188,7 @@ public class EpioneController {
         try {
             //will check the past all the way and if the adherence is false
             // will check 5 min after as buffer
-            new Reminder().execute(new String[]{"updateReminderPrescriptionTaken","true"," place reminderid here"}).get();
+            ReminderExecutor.execute(new String[]{"updateReminderPrescriptionTaken","true"," place reminderid here"}).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -183,12 +198,5 @@ public class EpioneController {
         //close box
         ev3Box.GetRequest("in");
     }
-
-//    public String getRealPathFromURI(Uri uri) {
-//        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-//        cursor.moveToFirst();
-//        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-//        return cursor.getString(idx);
-//    }
 
 }

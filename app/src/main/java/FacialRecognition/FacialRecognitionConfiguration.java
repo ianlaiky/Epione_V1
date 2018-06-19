@@ -211,15 +211,19 @@ public class FacialRecognitionConfiguration extends AsyncTask<Object,Void,Boolea
         //facial verification
         //returns the result after comparison of two faceId
         Boolean verificationResult = compareUser(faceIdFromDB);
-        return verificationResult;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean verifiedSuccess) {
-        //update verification status
-        EpioneController.isValidUser = verifiedSuccess;
-        //follow up method after verification
-        EpioneController.verifiedUser();
+        if(verificationResult){
+            return true;
+        }
+        return false;
 
     }
+
+//    @Override
+//    protected void onPostExecute(Boolean verifiedSuccess) {
+//        //update verification status
+//        EpioneController.isValidUser = verifiedSuccess;
+//        //follow up method after verification
+//        EpioneController.verifiedUser();
+//
+//    }
 }

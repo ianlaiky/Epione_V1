@@ -135,12 +135,15 @@ public class EpioneController {
     public static void verifiedUser(){
 
         if(isValidUser){
+            //verification succeed
             app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
             app.AlertUserAddOn("Please take the panadol in Box 1 and take 2 pills only");
+            //add silence to pause the conversation
             app.AddPauseInTTS();
             medicalAherence();
 
         }else if (!isValidUser){
+            //verification fails
             app.AlertUser("I can't recognise who you are");
         }
     }

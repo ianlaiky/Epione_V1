@@ -28,7 +28,7 @@ public class EpioneController {
 
     public static MainActivity app;
 
-    private EV3Configuration ev3Box = new EV3Configuration();
+    private static EV3Configuration ev3Box = new EV3Configuration();
 
     public EpioneController(MainActivity app)
     {
@@ -58,6 +58,7 @@ public class EpioneController {
         }
         return null;
     }
+
 
     /**
     *  Check remainder for patient for every 5 minutes
@@ -131,25 +132,37 @@ public class EpioneController {
 
         return isValidUser;
     }
-    public static boolean verifiedUser(){
+    public static void verifiedUser(){
+
         if(isValidUser){
             app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
             app.AlertUserAddOn("Please take the panadol in Box 1 and take 2 pills only");
+            app.AddPauseInTTS();
+            medicalAherence();
 
+        }else if (!isValidUser){
+            app.AlertUser("I can't recognise who you are");
         }
-        return isValidUser;
     }
 
 
-    public Prescription getPrescription(String patientID)
+    public static Prescription getPrescription(String patientID)
     {
         return null;
     }
 
-    public void openBox()
+    public static void openBox()
     {
         //open box
+        app.AlertUserAddOn("Opening box 1");
         ev3Box.GetRequest("out");
+    }
+
+    public static void medicalAherence(){
+        getPrescription("patientId");
+        getPatient();
+        System.out.println("Epione open box");
+        openBox();
     }
 
     public void closeBox()

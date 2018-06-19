@@ -586,8 +586,8 @@ public class MainActivity extends AppCompatActivity {
                         if (epione.ValidatePatient("patientid", finalFile)) //if is correct user
                         {
                             //get patient prescription
-                            Prescription PatientPrescription = epione.getPrescription("patientid");
-                            epione.getPatient();
+//                            Prescription PatientPrescription = epione.getPrescription("patientid");
+//                            epione.getPatient();
 
 //                            startTts("Please take the panadol in Box 1 and take 2 pills only");
                             //then read out instruction to user
@@ -602,8 +602,8 @@ public class MainActivity extends AppCompatActivity {
 //                        }
 
                             //open cabinet box
-                            System.out.println("Epione open box");
-                            epione.openBox();
+//                            System.out.println("Epione open box");
+//                            epione.openBox();
                         }
                     }
                 };
@@ -670,6 +670,9 @@ public class MainActivity extends AppCompatActivity {
     }
     public void AlertUserAddOn(String text){
         textToSpeech.speak(text, TextToSpeech.QUEUE_ADD,null);
+    }
+    public void AddPauseInTTS(){
+        textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
     }
 
     //========================================================================================================

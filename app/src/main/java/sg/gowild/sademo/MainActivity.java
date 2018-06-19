@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
         textView = findViewById(R.id.textview);
         imageView = findViewById(R.id.imageview);
+        imageView.setImageResource(R.drawable.xiaobaigeneral);
 
         progressBar = findViewById(R.id.progressbar);
 

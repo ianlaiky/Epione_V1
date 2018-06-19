@@ -164,8 +164,6 @@ public class EpioneController {
     public  Prescription getPrescription(String patientID)
     {
 
-
-
         return null;
     }
 
@@ -183,12 +181,12 @@ public class EpioneController {
         openBox();
     }
 
-    public void closeBox()
+    public void closeBox(String remindID)
     {
         try {
             //will check the past all the way and if the adherence is false
             // will check 5 min after as buffer
-            ReminderExecutor.execute(new String[]{"updateReminderPrescriptionTaken","true"," place reminderid here"}).get();
+            ReminderExecutor.execute(new String[]{"updateReminderPrescriptionTaken","true",remindID}).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

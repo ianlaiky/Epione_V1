@@ -510,19 +510,12 @@ public class MainActivity extends AppCompatActivity {
 
             //close cabinet box
             System.out.println("Epione close box");
-            //epione.closeBox();
-
-
-            //update remainder table
-
-            //update prescription table
-
-
-
+            String remindID = String.valueOf(Reminder.getReminderId());
+            epione.closeBox(remindID);//will update remind table
 
             //once user takes medicine already
             //restart checking remainder
-            //epione.checkRemainder("");
+            epione.checkRemainder();
         } else {
             startTts(originalSpeech);
 

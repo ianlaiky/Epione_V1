@@ -24,7 +24,9 @@ public class EpioneController {
 
      ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    public MainActivity app;
+     public static boolean isValidUser;
+
+    public static MainActivity app;
 
     private EV3Configuration ev3Box = new EV3Configuration();
 
@@ -114,18 +116,27 @@ public class EpioneController {
 //        File finalFile = new File(getRealPathFromURI(tempUri));
 //        Path path = Paths.get(pathToPhoto.getPath());
 //        new FacialRecognitionConfiguration(path).execute("");
-        new FacialRecognitionConfiguration().execute(imageFile);
+        new FacialRecognitionConfiguration().execute(imageFile,getPatient().getFaceId());
 
 
-        boolean isValidUser = true;
+//        isValidUser = true;
+//        if(isValidUser){
+//            System.out.println(isValidUser + " VERIFYYYY ?");
+//            app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
+//            app.AlertUserAddOn("Please take the panadol in Box 1 and take 2 pills only");
+//
+//        }
+        //step1. verify patient through facial recogntion
+
+
+        return isValidUser;
+    }
+    public static boolean verifiedUser(){
         if(isValidUser){
             app.AlertUser("Good day" + getPatient().getName() + ", You are verified");
             app.AlertUserAddOn("Please take the panadol in Box 1 and take 2 pills only");
 
         }
-        //step1. verify patient through facial recogntion
-
-
         return isValidUser;
     }
 

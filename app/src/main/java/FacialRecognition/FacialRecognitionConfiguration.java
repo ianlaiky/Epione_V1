@@ -10,6 +10,10 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -26,17 +30,21 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import sg.gowild.sademo.EpioneController;
 
-public class FacialRecognitionConfiguration extends AsyncTask<File,Void,Void> {
+public class FacialRecognitionConfiguration extends AsyncTask<Object,Void,Boolean> {
 
 
     static Uri ImageURI;
+    static String faceId;
 
 
     @TargetApi(Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static void method(File file) throws IOException {
         //ImageURI = image;
+
+        String detectFaceResult = "";
 
         OkHttpClient client = new OkHttpClient();
         //application/octet-stream
@@ -77,12 +85,85 @@ public class FacialRecognitionConfiguration extends AsyncTask<File,Void,Void> {
 
         try {
             Response response = client.newCall(request).execute();
-            System.out.println(response.body().string());
+            detectFaceResult = response.body().string();
+            System.out.println(detectFaceResult + "print");
+            JSONArray jsonArray = new JSONArray(detectFaceResult);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+
+                JSONObject jsonObj = jsonArray.getJSONObject(i);
+                faceId = jsonObj.getString("faceId");
+                System.out.println(faceId + " FACE ID");
+
+            }
+
+
             // Do something with the response.
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
+    }
+
+    public static boolean compareUser(String faceIdFromDB){
+        String verifyUserResult = "";
+        Boolean isIdentical = false;
+        double confidenceLevel = 0;
+
+        System.out.println("compare user");
+        String faceIdDB = faceIdFromDB;
+        System.out.println("wont print");
+        String faceIdCamera = faceId;
+        System.out.println(faceIdDB + " DB");
+        System.out.println(faceIdCamera + " Camera");
+        System.out.println("{\"faceId1\":\"" + faceIdCamera +
+                "\",\"faceId12\":\"" + faceIdFromDB +
+                "\"}");
+
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(mediaType,
+                "{\n" +
+                        "    \"faceId1\": \"" + faceIdFromDB +  "\",\n" +
+                        "    \"faceId2\": \"" + faceIdCamera +  "\"\n" +
+                        "}\n"
+                );
+
+
+        Request request = new Request.Builder()
+                .url("https://southeastasia.api.cognitive.microsoft.com/face/v1.0/verify")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Ocp-Apim-Subscription-Key","f697d347019b4c74976466006f62d811")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            verifyUserResult = response.body().string();
+            System.out.println(verifyUserResult + " verify");
+//            JSONArray jsonArray = new JSONArray(verifyUserResult);
+
+            JSONObject jsonObj = new JSONObject(verifyUserResult);
+
+//            for (int i = 0; i < jsonArray.length(); i++) {
+//
+//                JSONObject jsonObj = jsonArray.getJSONObject(i);
+//                isIdentical = "true".equals(jsonObj.getString("isIdentical"));
+                isIdentical = jsonObj.getBoolean("isIdentical");
+                System.out.println(isIdentical+ " Boolean isIdentical");
+                confidenceLevel = jsonObj.getDouble("confidence");
+                System.out.println(confidenceLevel+ " Confidence");
+
+            // Do something with the response.
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return isIdentical;
     }
 
 
@@ -133,15 +214,42 @@ public class FacialRecognitionConfiguration extends AsyncTask<File,Void,Void> {
 
     }
 
+//    @Override
+//    protected Void doInBackground(File... files) {
+//
+//        System.out.println("GVMHBNJKHGJI");
+//        try {
+//            method(files[0]);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        compareUser();
+//        return null;
+//    }
+
     @Override
-    protected Void doInBackground(File... files) {
+    protected Boolean doInBackground(Object... objects) {
 
         System.out.println("GVMHBNJKHGJI");
+        File file = (File) objects[0];
+        String faceIdFromDB = (String) objects[1];
+
         try {
-            method(files[0]);
+            method(file);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        //returns the result after comparison of two faceId
+        Boolean verificationResult = compareUser(faceIdFromDB);
+        return verificationResult;
+    }
+
+    @Override
+    protected void onPostExecute(Boolean verifiedSuccess) {
+        EpioneController.isValidUser = verifiedSuccess;
+        EpioneController.verifiedUser();
+
     }
 }

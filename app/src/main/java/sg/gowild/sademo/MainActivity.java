@@ -602,6 +602,7 @@ public class MainActivity extends AppCompatActivity {
 //                        }
 
                             //open cabinet box
+                            System.out.println("Epione open box");
                             epione.openBox();
                         }
                     }

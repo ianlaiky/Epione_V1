@@ -253,8 +253,8 @@ public class Prescription extends AsyncTask<String[], Void, List<Prescription>> 
     protected List<Prescription> doInBackground(String[]... strings) {
 
 
-        System.out.println(strings[0][0]);
-        System.out.println(strings[0][1]);
+//        System.out.println(strings[0][0]);
+//        System.out.println(strings[0][1]);
 
 
         if(strings[0][0].equalsIgnoreCase("getAllPrescription")){

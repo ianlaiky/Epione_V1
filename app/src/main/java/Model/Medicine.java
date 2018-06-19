@@ -1,5 +1,7 @@
 package Model;
 
+import android.os.AsyncTask;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,7 +15,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class Medicine {
+public class Medicine extends AsyncTask<String[],Void,List<Medicine>>{
 
     int medId;
     String medName;
@@ -203,5 +205,21 @@ public class Medicine {
     }
 
 
+    @Override
+    protected List<Medicine> doInBackground(String[]... strings) {
 
+
+//        System.out.println(strings[0][0]);
+//        System.out.println(strings[0][0]);
+
+
+        if(strings[0][0].equalsIgnoreCase("getAllMedicineDetails")){
+            return getAllMedicineDetails();
+        }else if(strings[0][0].equalsIgnoreCase("getAllMedicineDetailsByMedId")){
+            return getAllMedicineDetailsByMedId(strings[0][1].toString());
+        }
+
+
+        return null;
+    }
 }

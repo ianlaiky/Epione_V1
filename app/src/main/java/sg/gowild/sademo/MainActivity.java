@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -85,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
     private Button ev3ButtonIn;
     private Button ev3ButtonOut;
     private TextView textView;
-    public ImageView imageView;
-    private Bitmap pic;
+    private ImageView imageView;
+    private ProgressBar progressBar;
 
     //for camera
     private static final int CAMERA_REQUEST = 100;
@@ -183,6 +184,8 @@ public class MainActivity extends AppCompatActivity {
 
         textView = findViewById(R.id.textview);
         imageView = findViewById(R.id.imageview);
+
+        progressBar = findViewById(R.id.progressbar);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override

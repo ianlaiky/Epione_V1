@@ -8,24 +8,36 @@
     android:gravity="center"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="177dp"
-        android:layout_toEndOf="@+id/ev3ButtonIn"
-        android:text="Hello World!"
-        android:textSize="36sp" />
-
-    <Button
-        android:id="@+id/button"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="221dp"
-        android:text="Press Me" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+
+        <TextView
+            android:id="@+id/textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/ev3ButtonIn"
+            android:text="Hello World!"
+            android:textSize="36sp" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="221dp"
+            android:text="Press Me"
+            android:visibility="gone"
+            />
+
+    </LinearLayout>
+
+
+
 
     <Button
         android:id="@+id/ev3ButtonIn"
@@ -34,14 +46,17 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:text="Ev3Button IN"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:visibility="gone"
+        />
+
 
     <Button
         android:id="@+id/ev3Buttonout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/textview"
+        android:visibility="gone"
         android:text="Ev3Button OUT" />
 
 
@@ -54,5 +69,11 @@
 
 
 
-
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        />
 </RelativeLayout>

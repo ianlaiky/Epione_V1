@@ -133,20 +133,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        //TODO:FUNCTION TO CONSTANTLY CHECK FOR REMAINDER
+        //AND ALERT TO XIAOBAI
+        //uncomment once everything is done
+
         setUpConfigurations();
 
-        //enable hotword
-        startHotword();
 
 
 //        new FacialRecognitionConfiguration(pic).execute("");
 
 //        new FacialRecognitionConfiguration().execute("");
 
-        //TODO:FUNCTION TO CONSTANTLY CHECK FOR REMAINDER
-        //AND ALERT TO XIAOBAI
-        //uncomment once everything is done
         epione.checkRemainder();
+
+
+
+        //enable hotword
+        startHotword();
+
+
 
 
     }
@@ -515,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
 
             //once user takes medicine already
             //restart checking remainder
-            epione.checkRemainder();
+            //epione.checkRemainder();
         } else {
             startTts(originalSpeech);
 
@@ -570,7 +577,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                        textToSpeech.speak(remarks,TextToSpeech.QUEUE_FLUSH,null);
+                        textToSpeech.speak("remarks is : " + remarks,TextToSpeech.QUEUE_FLUSH,null);
                         while (textToSpeech.isSpeaking())
                         {
                             try {
@@ -588,6 +595,7 @@ public class MainActivity extends AppCompatActivity {
                 };
 
                 Threadings.runInBackgroundThread(runnable);
+                startHotword();
 
 
         }

@@ -17,12 +17,9 @@ public class DialogFlowConfiguration {
     public static final String DIALOGFLOW_CLIENT_ACCESS_TOKEN = "cb4c0d8c657847fb9be28a42855c3e32";
 
 
-
-
     //for testing
     public static void main(String[] args) {
         System.out.println("Hello World");
-
 
 
         System.out.print("sdf");
@@ -30,12 +27,21 @@ public class DialogFlowConfiguration {
         System.out.println("wanying here");
 
 
-//
-//
-//        executor.schedule(new Runnable() {
-//            public void run() {
-//                System.out.println("reminder stop");
-//                remainderHandler.cancel(true); }
-//        }, 6, TimeUnit.SECONDS);
+
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+
+        Runnable run = new Runnable() {
+            public void run() {
+                System.out.println("test");
+            }
+        };
+
+      ses.scheduleAtFixedRate(run,0,2,TimeUnit.SECONDS);
+
+    //ses.schedule(run,1,TimeUnit.SECONDS);
+
+
+
     }
+
 }

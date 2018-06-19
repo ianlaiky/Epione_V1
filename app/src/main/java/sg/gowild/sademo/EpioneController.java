@@ -7,8 +7,6 @@ import android.net.Uri;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -23,17 +21,14 @@ import Model.Reminder;
 public class EpioneController {
 
 
-
+    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
 
 
     public  MainActivity app;
-    public ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
     private EV3Configuration ev3Box = new EV3Configuration();
 
-    private Patient PatientExecutor = new Patient();
-    private Reminder ReminderExecutor = new Reminder();
-    private FacialRecognitionConfiguration FRExecutor = new FacialRecognitionConfiguration();
 
     public  boolean isValidUser;
 
@@ -51,7 +46,7 @@ public class EpioneController {
         try {
 
 
-            List<Patient> pt = PatientExecutor.execute(new String[]{"getAllPatientDetailsById", pid}).get();
+            List<Patient> pt = new Patient().execute(new String[]{"getAllPatientDetailsById", pid}).get();
             for (int i = 0; i < pt.size(); i++) {
                 System.out.println("haahahahahhahahah");
                 System.out.println(pt.get(i).getName());
@@ -81,12 +76,14 @@ public class EpioneController {
         //call remainder database and check
         Runnable helloRunnable = new Runnable() {
             int count = 0;
+            @Override
             public void run() {
                 //for testing
-               // count ++;
+                count ++;
                // System.out.println("Calling remainder");
                 try {
-                    List<Reminder> reminders = ReminderExecutor.execute(new String[]{"getNextFiveMinuteReminder"}).get();
+                    System.out.println("f me");
+                    List<Reminder> reminders = new Reminder().execute(new String[]{"getNextFiveMinuteReminder"}).get();
                     System.out.println("checking remainder");
                     if(reminders.get(0) != null) //if have remainder
                     {   System.out.println("executor stop");
@@ -102,13 +99,14 @@ public class EpioneController {
                         app.AlertUser("Alert Alert, TIME TO TAKE MEDICINE !! for patient : "+ patientId );
                     }
 
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
-
-
 
                 System.out.println(count);
 
@@ -132,8 +130,8 @@ public class EpioneController {
 //        Path path = Paths.get(pathToPhoto.getPath());
 //        new FacialRecognitionConfiguration(path).execute("");
         try {
-            boolean isValid = FRExecutor.execute(imageFile,pt.getFaceId()).get();
-            return isValidUser;
+            boolean isValid = new FacialRecognitionConfiguration().execute(imageFile,pt.getFaceId()).get();
+            return isValid;
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -201,7 +199,7 @@ public class EpioneController {
         try {
             //will check the past all the way and if the adherence is false
             // will check 5 min after as buffer
-            ReminderExecutor.execute(new String[]{"updateReminderPrescriptionTaken","true",remindID}).get();
+            new Reminder().execute(new String[]{"updateReminderPrescriptionTaken",remindID,"true"}).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

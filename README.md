@@ -7,6 +7,6 @@
 
 <br><br><br>
 
-<b>Our Solution to Medical Adherence</b>
+<b>Team Sentinel's Solution to Medical Non-Adherence</b>
 
 ![alt text](https://i.imgur.com/DmvQucm.jpg)

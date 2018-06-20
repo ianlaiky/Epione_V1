@@ -124,9 +124,9 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("snowboy-detect-android");
     }
 
-    // TODO: REPLACE MODEL FILE WITH PERSONAL MODEL FOR HOTWORD
-    //TODO:CONFIGURE NLU TO PASS PATIENT ID TO WEBHOOK
-    //TODO:CONFIGURE NLU TO GET INTENT AND CALL RELEVANT FUNCTION
+    // TODO: REPLACE MODEL FILE WITH PERSONAL MODEL FOR HOTWORD - DONE
+    //TODO:CONFIGURE NLU TO PASS PATIENT ID TO WEBHOOK - LATER PART
+    //TODO:CONFIGURE NLU TO GET INTENT AND CALL RELEVANT FUNCTION - PARTIAL DONE
 
 
     @Override
@@ -269,6 +269,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onEndOfSpeech() {
                 //when it has dectect end of speech
+                //show progress bar
+                progressBar.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -342,12 +344,12 @@ public class MainActivity extends AppCompatActivity {
         SnowboyUtils.copyAssets(this);
 
         File snowboyDirectory = SnowboyUtils.getSnowboyDirectory();
-        File model = new File(snowboyDirectory, "alexa_02092017.umdl");
+        File model = new File(snowboyDirectory, "Hi_Epione.pmdl");
         File common = new File(snowboyDirectory, "common.res");
 
         // TODO: Set Sensitivity
         snowboyDetect = new SnowboyDetect(common.getAbsolutePath(), model.getAbsolutePath());
-        snowboyDetect.setSensitivity("0.60");
+        snowboyDetect.setSensitivity("0.50");
         snowboyDetect.applyFrontend(true);
     }
 
@@ -409,6 +411,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         Threadings.runInBackgroundThread(runnable);
+
+        //HIDE PROGRESS BAR ONCE TEXT TO SPEECH STARTS
+        //ONLY CAN BE DONE IN MAIN THREAD
+        Runnable runnable1 = new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        };
+        Threadings.runInMainThread(this,runnable1);
     }
 
     private void startHotword() {
@@ -597,6 +609,20 @@ public class MainActivity extends AppCompatActivity {
                         //TODO
                             //epione.openBox();
                         }
+                        else  //if not patient ask to try again
+                            {
+                                textToSpeech.speak("Sorry, Could you please try that again ? ",TextToSpeech.QUEUE_FLUSH,null);
+                                while (textToSpeech.isSpeaking())
+                                {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                startCameraIntent();
+                            }
                     }
                 };
 

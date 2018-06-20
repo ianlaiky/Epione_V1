@@ -170,8 +170,7 @@ public class EpioneController {
         app.AlertUserAddOn("Opening box 1");
         ev3Box.GetRequest("out");
     }
-
-
+    
 
     public void closeBox(String remindID)
     {

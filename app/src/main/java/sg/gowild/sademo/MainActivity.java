@@ -539,12 +539,12 @@ public class MainActivity extends AppCompatActivity {
 
             //once user takes medicine already
             //restart checking remainder
-            //epione.checkRemainder();
+            epione.checkRemainder();
         } else {
             startTts(originalSpeech);
 
             //restart scheduling remainder
-            //epione.checkRemainder("1");
+            epione.checkRemainder();
         }
 
     }
@@ -617,7 +617,7 @@ public class MainActivity extends AppCompatActivity {
                             System.out.println("Epione open box");
 
                         //TODO
-                            //epione.openBox();
+                            epione.openBox();
                         }
                         else  //if not patient ask to try again
                             {

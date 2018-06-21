@@ -54,6 +54,7 @@ public class Medicine extends AsyncTask<String[],Void,List<Medicine>>{
         this.metricValue = metricValue;
     }
 
+    public Medicine(){};
 
     public Medicine(int medId, String medName, String medType, String metricValue) {
         this.medId = medId;
@@ -216,6 +217,7 @@ public class Medicine extends AsyncTask<String[],Void,List<Medicine>>{
         if(strings[0][0].equalsIgnoreCase("getAllMedicineDetails")){
             return getAllMedicineDetails();
         }else if(strings[0][0].equalsIgnoreCase("getAllMedicineDetailsByMedId")){
+            System.out.println("MEDIDINEKNSJNHJDSHJH");
             return getAllMedicineDetailsByMedId(strings[0][1].toString());
         }
 

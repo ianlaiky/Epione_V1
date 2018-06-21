@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import FacialRecognition.FacialRecognitionConfiguration;
 import Hardware.EV3Configuration;
+import Model.Medicine;
 import Model.Patient;
 import Model.Prescription;
 import Model.Reminder;
@@ -96,7 +97,7 @@ public class EpioneController {
                         app.Reminder = reminders.get(0);
                         app.Patient = pt;
 
-                        app.AlertUser("Alert Alert, TIME TO TAKE MEDICINE !! for patient : "+ patientId );
+                        app.AlertUser("Alert Alert "+ pt.getName() + ", TIME TO TAKE MEDICINE !!");
                     }
 
 
@@ -143,12 +144,12 @@ public class EpioneController {
     }
 
 
-    public  Prescription getPatientPrescription(String patientID)
+    public  Prescription getPatientPrescriptionBasedOnRemID(String reminderID)
     {
         try {
 
 
-            List<Prescription> pt = new Prescription().execute(new String[]{"getAllPrescriptionByPatientId", patientID}).get();
+            List<Prescription> pt = new Prescription().execute(new String[]{"getAllPrescriptionById", reminderID}).get();
             for (int i = 0; i < pt.size(); i++) {
                 System.out.println(pt.get(i).getDosage());
                 System.out.println(pt.get(i).getInstruction());
@@ -163,6 +164,27 @@ public class EpioneController {
 
         return null;
     }
+
+    public Medicine getMedicineBasedOnPrescription(String MedID)
+    {
+        try {
+
+
+            List<Medicine> med = new Medicine().execute(new String[]{"getAllMedicineDetailsByMedId", MedID}).get();
+
+            for (int i = 0; i < med.size(); i++) {
+                System.out.println(med.get(i).getMedName());
+                return med.get(i);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
     public  void openBox()
     {

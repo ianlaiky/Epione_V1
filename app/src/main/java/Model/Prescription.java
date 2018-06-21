@@ -177,6 +177,8 @@ public class Prescription extends AsyncTask<String[], Void, List<Prescription>> 
         return allpat;
     }
 
+
+    // ID is Reminder ID
     public static List<Prescription> getAllPrescriptionById(String par){
         List<Prescription> allpat = new ArrayList<>();
         JsonArray jsArr = getRequestBuilder("getAllPrescriptionById", "prescriptionId", par.toString());

@@ -55,6 +55,7 @@ import Database.DBController;
 import DialogFlow.DialogFlowConfiguration;
 import FacialRecognition.FacialRecognitionConfiguration;
 import Hardware.EV3Configuration;
+import Model.Medicine;
 import Model.Patient;
 import Model.Prescription;
 import Model.Reminder;
@@ -349,7 +350,7 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO: Set Sensitivity
         snowboyDetect = new SnowboyDetect(common.getAbsolutePath(), model.getAbsolutePath());
-        snowboyDetect.setSensitivity("0.50");
+        snowboyDetect.setSensitivity("0.60");
         snowboyDetect.applyFrontend(true);
     }
 
@@ -583,17 +584,26 @@ public class MainActivity extends AppCompatActivity {
 
                             //get patient prescription
                             String pid = String.valueOf(Patient.getPatientId());
-                            Prescription PatientPrescription = epione.getPatientPrescription(pid);
+
+                            String ReminderPrescriptionID =  String.valueOf(Reminder.getPrescriptionId());
+                            Prescription PatientPrescription = epione.getPatientPrescriptionBasedOnRemID(ReminderPrescriptionID);
+
+                            String MedID =  String.valueOf(PatientPrescription.getMedId());
+                            System.out.println("mam,amamammama "+MedID);
+                            Medicine medicine = epione.getMedicineBasedOnPrescription(MedID);
+
+
+                            String medName = medicine.getMedName();
+
 
                             //then read out instruction to user
                             //int timeToTakePerDay = PatientPrescription.getInstruction();
                             int dosage = PatientPrescription.getDosage();
                             String remarks = PatientPrescription.getRemarks();
+                           // "Please take Panadol from box 1 and take only 2 pills."
 
 
-
-
-                        textToSpeech.speak("remarks is : " + remarks,TextToSpeech.QUEUE_FLUSH,null);
+                        textToSpeech.speak("Please take " + medName + "from Box 1 and take only"+ dosage + " " + medicine.getMetricValue(),TextToSpeech.QUEUE_FLUSH,null);
                         while (textToSpeech.isSpeaking())
                         {
                             try {
@@ -629,6 +639,13 @@ public class MainActivity extends AppCompatActivity {
                 Threadings.runInBackgroundThread(runnable);
                 startHotword();
 
+            Runnable runnable1 = new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            };
+            Threadings.runInMainThread(this,runnable1);
 
         }
     }

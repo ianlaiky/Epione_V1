@@ -542,7 +542,6 @@ public class MainActivity extends AppCompatActivity {
             epione.checkRemainder();
         } else {
             startTts(originalSpeech);
-
             //restart scheduling remainder
             epione.checkRemainder();
         }
@@ -552,6 +551,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        textToSpeech.speak("Verifying Face",TextToSpeech.QUEUE_FLUSH,null);
+        while (textToSpeech.isSpeaking())
+        {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         //check if is from photo
         if (requestCode == CAMERA_REQUEST) {
 
@@ -574,12 +584,15 @@ public class MainActivity extends AppCompatActivity {
             final File finalFile = new File(getRealPathFromURI(tempUri));
 
 
+
+
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
                         //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
                         if (epione.ValidatePatient(Patient, finalFile)) //if is correct user
                         {
+
 
 
                             //get patient prescription

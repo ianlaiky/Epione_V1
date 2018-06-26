@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: Change Client Access Token - DONE
         String clientAccessToken = client_token;
         AIConfiguration aiConfiguration = new AIConfiguration(clientAccessToken,
-                AIConfiguration.SupportedLanguages.English);
+                AIConfiguration.SupportedLanguages.ChineseChina);
         aiDataService = new AIDataService(aiConfiguration);
     }
 
@@ -368,8 +368,8 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 // TODO: ABLE TO SWITCH LANGUAGES TO OTHER LANGUAGES
                 final Intent recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "en");
-                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en");
+                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "zh");
+                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh");
                 recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
                 recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
                 //number of time to try to recogzinze
@@ -387,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void startTts(String text) {
-
+        textToSpeech.setLanguage(Locale.SIMPLIFIED_CHINESE);
         // Start TTS
         //TextToSpeech.QUEUE_FLUSH - remove appening words when speaking
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);

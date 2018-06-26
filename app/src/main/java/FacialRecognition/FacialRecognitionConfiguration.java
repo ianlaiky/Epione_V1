@@ -141,13 +141,18 @@ public class FacialRecognitionConfiguration extends AsyncTask<Object,Void,Boolea
             System.out.println(verifyUserResult + " verify");
 
             JSONObject jsonObj = new JSONObject(verifyUserResult);
-
-
-
+            if(jsonObj.has("isIdentical")){
                 isIdentical = jsonObj.getBoolean("isIdentical");
                 System.out.println(isIdentical+ " Boolean isIdentical");
                 confidenceLevel = jsonObj.getDouble("confidence");
                 System.out.println(confidenceLevel+ " Confidence");
+            }
+            else{
+                return false;
+            }
+
+
+
 
             // Do something with the response.
         } catch (IOException e) {

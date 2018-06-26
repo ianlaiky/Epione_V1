@@ -97,7 +97,9 @@ public class EpioneController {
                         app.Reminder = reminders.get(0);
                         app.Patient = pt;
 
-                        app.AlertUser("Alert Alert "+ pt.getName() + ", TIME TO TAKE MEDICINE !!");
+                        app.AlertUser(app.lang.getAlertUserResponse(pt.getName()));
+
+                        //app.AlertUser("Alert Alert "+ pt.getName() + ", TIME TO TAKE MEDICINE !!");
                     }
 
 
@@ -189,7 +191,8 @@ public class EpioneController {
     public  void openBox()
     {
         //open box
-        app.AlertUserAddOn("Opening box 1");
+        //app.AlertUserAddOn("Opening box 1");
+        app.AlertUserAddOn(app.lang.getOpenCabinetResponse("1"));
         ev3Box.GetRequest("out");
     }
     

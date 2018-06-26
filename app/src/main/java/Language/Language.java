@@ -1,31 +1,52 @@
 package Language;
 
-import Model.Patient;
 import ai.api.AIConfiguration;
 
-public interface Language {
+public class Language {
 
-    //default languages
-      String RECONGNIZER_INTENT_LOCALE = "";
-      AIConfiguration.SupportedLanguages DIALOGFLOW_LANGUAGE = AIConfiguration.SupportedLanguages.English;
-     String SCAN_FACE_RESPONSE = "";
-     String VERIFYING_FACE_RESPONSE = "";
-     String VERIFYING_FACE_FAIL_RESPONSE = "";
+    //fixed variables
+    //default
+    String RECONGNIZER_INTENT_LOCALE = "en";
+    AIConfiguration.SupportedLanguages DIALOGFLOW_LANGUAGE = AIConfiguration.SupportedLanguages.English;
 
 
-
-     String GIVE_MED_INSTRUCTION_RESPONSE = "";
-     String OPEN_CABINET_RESPONSE = "";
-     String CLOSE_CABINET_RESPONSE = "";
-    String ALERT_USER_RESPONSE = "";
+    String SCAN_FACE_RESPONSE = "LET ME SCAN YOUR FACE";
+    String VERIFYING_FACE_RESPONSE = "VERIFYING FACE";
+    String VERIFYING_FACE_FAIL_RESPONSE = "SORRY, PLEASE TRY AGAIN.";
 
 
-     public String getAlertUserResponse(String patientName);
-     public String getOpenCabinetResponse(String boxNo);
-    public String getCloseCabinetResponse(String boxNo);
-    public String getGiveMedInstructionResponse(String BoxNo,String medicineName,int Dosage,String metricValue);
+    public String getRECONGNIZER_INTENT_LOCALE(){ return RECONGNIZER_INTENT_LOCALE;}
 
+    public AIConfiguration.SupportedLanguages getDIALOGFLOW_LANGUAGE() {
+        return DIALOGFLOW_LANGUAGE;
+    }
 
+    public String getSCAN_FACE_RESPONSE() {
+        return SCAN_FACE_RESPONSE;
+    }
 
+    public String getVERIFYING_FACE_RESPONSE() {
+        return VERIFYING_FACE_RESPONSE;
+    }
+
+    public String getVERIFYING_FACE_FAIL_RESPONSE() {
+        return VERIFYING_FACE_FAIL_RESPONSE;
+    }
+
+    public String getAlertUserResponse(String patientName){
+        return  "ALERT ALERT "+ patientName + ", TIME TO TAKE MEDICINE";
+    }
+
+    public String getOpenCabinetResponse(String boxNo) {
+        return "OPENING BOX " + boxNo;
+    }
+
+    public String getCloseCabinetResponse(String boxNo) {
+        return "CLOSING BOX " + boxNo;
+    }
+
+    public String getGiveMedInstructionResponse(String boxNo,String medicineName, int Dosage, String metricValue) {
+        return "Please take " + medicineName + " from "+ boxNo +" and take only "+ Dosage + " " + metricValue;
+    }
 
 }

@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+
 import Database.DBController;
 import DialogFlow.DialogFlowConfiguration;
 import FacialRecognition.FacialRecognitionConfiguration;
@@ -59,6 +60,7 @@ import Model.Medicine;
 import Model.Patient;
 import Model.Prescription;
 import Model.Reminder;
+import Language.*;
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import ai.api.AIServiceException;
@@ -117,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
     //will get patient data once have a reminder
     public Patient Patient;
     public Reminder Reminder;
+
+    public Language lang = new Language();
 
 
 
@@ -362,14 +366,14 @@ public class MainActivity extends AppCompatActivity {
         //stop scheduling remainder to avoid clash
         epione.executor.shutdown();
 
-
+        final String lang_preference = lang.getRECONGNIZER_INTENT_LOCALE();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 // TODO: ABLE TO SWITCH LANGUAGES TO OTHER LANGUAGES
                 final Intent recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "zh");
-                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "zh");
+                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, lang_preference);
+                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, lang_preference);
                 recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
                 recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
                 //number of time to try to recogzinze
@@ -387,7 +391,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void startTts(String text) {
-        textToSpeech.setLanguage(Locale.SIMPLIFIED_CHINESE);
         // Start TTS
         //TextToSpeech.QUEUE_FLUSH - remove appening words when speaking
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
@@ -517,7 +520,8 @@ public class MainActivity extends AppCompatActivity {
             //step 1.first check if is time to give medicine
 
             //step2. tell user, to scan face to verify
-            textToSpeech.speak("Okay,Let me scan your face", TextToSpeech.QUEUE_FLUSH, null);
+            //textToSpeech.speak("Okay,Let me scan your face", TextToSpeech.QUEUE_FLUSH, null);
+            textToSpeech.speak(lang.getSCAN_FACE_RESPONSE(), TextToSpeech.QUEUE_FLUSH, null);
             while (textToSpeech.isSpeaking()) {
                 try {
                     Thread.sleep(1000);
@@ -530,7 +534,8 @@ public class MainActivity extends AppCompatActivity {
             startCameraIntent();
 
         } else if (intentname.equalsIgnoreCase("medicine.close")) {
-            startTts("Okay,Closing Cabinet. I will remind you for when's its time for your next medicine");
+            //startTts("Okay,Closing Cabinet. I will remind you for when's its time for your next medicine");
+            startTts(lang.getCloseCabinetResponse("1"));
 
             //close cabinet box
             System.out.println("Epione close box");
@@ -554,7 +559,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        textToSpeech.speak("Verifying Face",TextToSpeech.QUEUE_FLUSH,null);
+        //textToSpeech.speak("Verifying Face",TextToSpeech.QUEUE_FLUSH,null);
+        textToSpeech.speak(lang.getVERIFYING_FACE_RESPONSE(),TextToSpeech.QUEUE_FLUSH,null);
         while (textToSpeech.isSpeaking())
         {
             try {
@@ -618,7 +624,8 @@ public class MainActivity extends AppCompatActivity {
                            // "Please take Panadol from box 1 and take only 2 pills."
 
 
-                        textToSpeech.speak("Please take " + medName + "from Box 1 and take only"+ dosage + " " + medicine.getMetricValue(),TextToSpeech.QUEUE_FLUSH,null);
+                        //textToSpeech.speak("Please take " + medName + "from Box 1 and take only"+ dosage + " " + medicine.getMetricValue(),TextToSpeech.QUEUE_FLUSH,null);
+                            textToSpeech.speak(lang.getGiveMedInstructionResponse("1",medName,dosage,medicine.getMetricValue()),TextToSpeech.QUEUE_FLUSH,null);
                         while (textToSpeech.isSpeaking())
                         {
                             try {
@@ -636,7 +643,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else  //if not patient ask to try again
                             {
-                                textToSpeech.speak("Sorry, Could you please try that again ? ",TextToSpeech.QUEUE_FLUSH,null);
+                                //textToSpeech.speak("Sorry, Could you please try that again ? ",TextToSpeech.QUEUE_FLUSH,null);
+                                textToSpeech.speak(lang.getVERIFYING_FACE_FAIL_RESPONSE(),TextToSpeech.QUEUE_FLUSH,null);
                                 while (textToSpeech.isSpeaking())
                                 {
                                     try {
@@ -741,4 +749,7 @@ public class MainActivity extends AppCompatActivity {
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
         return cursor.getString(idx);
     }
+
+
+
 }

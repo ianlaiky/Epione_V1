@@ -2,20 +2,33 @@ package Language;
 
 import ai.api.AIConfiguration;
 
-public class English implements Language {
+public class English extends Language {
 
     //fixed variables
     String RECONGNIZER_INTENT_LOCALE = "en";
     AIConfiguration.SupportedLanguages DIALOGFLOW_LANGUAGE = AIConfiguration.SupportedLanguages.English;
-     String SCAN_FACE_RESPONSE = "LET ME SCAN YOUR FACE";
-     String VERIFYING_FACE_RESPONSE = "VERIFYING FACE";
-     String VERIFYING_FACE_FAIL_RESPONSE = "SORRY, PLEASE TRY AGAIN.";
+    String SCAN_FACE_RESPONSE = "LET ME SCAN YOUR FACE";
+    String VERIFYING_FACE_RESPONSE = "VERIFYING FACE";
+    String VERIFYING_FACE_FAIL_RESPONSE = "SORRY, PLEASE TRY AGAIN.";
 
 
-    String GIVE_MED_INSTRUCTION_RESPONSE = "";
+    public String getRECONGNIZER_INTENT_LOCALE(){ return RECONGNIZER_INTENT_LOCALE;}
 
-    String OPEN_CABINET_RESPONSE = " ";
-    String CLOSE_CABINET_RESPONSE = "";
+    public AIConfiguration.SupportedLanguages getDIALOGFLOW_LANGUAGE() {
+        return DIALOGFLOW_LANGUAGE;
+    }
+
+    public String getSCAN_FACE_RESPONSE() {
+        return SCAN_FACE_RESPONSE;
+    }
+
+    public String getVERIFYING_FACE_RESPONSE() {
+        return VERIFYING_FACE_RESPONSE;
+    }
+
+    public String getVERIFYING_FACE_FAIL_RESPONSE() {
+        return VERIFYING_FACE_FAIL_RESPONSE;
+    }
 
     @Override
     public String getAlertUserResponse(String patientName){
@@ -28,8 +41,10 @@ public class English implements Language {
     }
 
     @Override
+    //TODO: NEED TO ADD AN VARIABLE TO SAY CLOSING BOX 2 FOR EXAMPLE
+    //      FOR NOW IS JUST ONE BOX SO WILL HAVE THE LAST SENTENCE
     public String getCloseCabinetResponse(String boxNo) {
-        return "CLOSING BOX " + boxNo;
+        return "Okay,Closing Cabinet. I will remind you for when's its time for your next medicine";
     }
 
     @Override

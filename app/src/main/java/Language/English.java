@@ -1,16 +1,23 @@
 package Language;
 
+import java.util.Locale;
+
 import ai.api.AIConfiguration;
 
 public class English extends Language {
 
     //fixed variables
     String RECONGNIZER_INTENT_LOCALE = "en";
+    Locale ttsLanguage = Locale.ENGLISH;
     AIConfiguration.SupportedLanguages DIALOGFLOW_LANGUAGE = AIConfiguration.SupportedLanguages.English;
     String SCAN_FACE_RESPONSE = "LET ME SCAN YOUR FACE";
     String VERIFYING_FACE_RESPONSE = "VERIFYING FACE";
     String VERIFYING_FACE_FAIL_RESPONSE = "SORRY, PLEASE TRY AGAIN.";
 
+
+    public Locale getTtsLanguage() {
+        return ttsLanguage;
+    }
 
     public String getRECONGNIZER_INTENT_LOCALE(){ return RECONGNIZER_INTENT_LOCALE;}
 

@@ -1,5 +1,7 @@
 package Language;
 
+import java.util.Locale;
+
 import ai.api.AIConfiguration;
 
 public class Language {
@@ -7,6 +9,7 @@ public class Language {
     //fixed variables
     //default
     String RECONGNIZER_INTENT_LOCALE = "en";
+    Locale ttsLanguage = Locale.ENGLISH;
     AIConfiguration.SupportedLanguages DIALOGFLOW_LANGUAGE = AIConfiguration.SupportedLanguages.English;
 
 
@@ -16,6 +19,10 @@ public class Language {
 
 
     public String getRECONGNIZER_INTENT_LOCALE(){ return RECONGNIZER_INTENT_LOCALE;}
+
+    public Locale getTtsLanguage() {
+        return ttsLanguage;
+    }
 
     public AIConfiguration.SupportedLanguages getDIALOGFLOW_LANGUAGE() {
         return DIALOGFLOW_LANGUAGE;

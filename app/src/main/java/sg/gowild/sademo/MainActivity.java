@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        new FacialRecognitionConfiguration().execute("");
 
-       // epione.checkRemainder();
+        epione.checkRemainder();
 
 
         //enable hotword
@@ -337,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: Change Client Access Token - DONE
         String clientAccessToken = client_token;
         AIConfiguration aiConfiguration = new AIConfiguration(clientAccessToken,
-                AIConfiguration.SupportedLanguages.ChineseChina);
+                lang.getDIALOGFLOW_LANGUAGE());
         aiDataService = new AIDataService(aiConfiguration);
     }
 
@@ -476,6 +476,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void startNlu(final String text) {
+
+        String clientAccessToken = DialogFlowConfiguration.DIALOGFLOW_CLIENT_ACCESS_TOKEN;
+        AIConfiguration aiConfiguration = new AIConfiguration(clientAccessToken,
+                lang.getDIALOGFLOW_LANGUAGE());
+        aiDataService = new AIDataService(aiConfiguration);
+
+
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -578,7 +585,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                  bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),photoURI);
                  bitmap = RotateBitmap(bitmap,-90);
-                imageView.setImageBitmap(bitmap);
+                //imageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -750,6 +757,10 @@ public class MainActivity extends AppCompatActivity {
         return cursor.getString(idx);
     }
 
+
+    public void changeTTSLang(){
+        textToSpeech.setLanguage(lang.getTtsLanguage());
+    }
 
 
 }

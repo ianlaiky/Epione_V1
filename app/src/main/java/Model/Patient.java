@@ -22,6 +22,7 @@ public class Patient extends AsyncTask<String[], Void, List<Patient>> {
     int patientId;
     String name;
     String faceId;
+    String language;
 
     public int getPatientId() {
         return patientId;
@@ -43,14 +44,23 @@ public class Patient extends AsyncTask<String[], Void, List<Patient>> {
         return faceId;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
     public void setFaceId(String faceId) {
         this.faceId = faceId;
     }
 
-    public Patient(int patientId, String name, String faceId) {
+    public Patient(int patientId, String name, String faceId, String language) {
         this.patientId = patientId;
         this.name = name;
         this.faceId = faceId;
+        this.language = language;
     }
 
     public Patient() {
@@ -162,7 +172,7 @@ public class Patient extends AsyncTask<String[], Void, List<Patient>> {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Patient paObj = new Patient(jobj.get("patientId").getAsInt(), jobj.get("name").getAsString(), jobj.get("faceId").getAsString());
+            Patient paObj = new Patient(jobj.get("patientId").getAsInt(), jobj.get("name").getAsString(), jobj.get("faceId").getAsString(),jobj.get("language").getAsString());
 
             allpat.add(paObj);
 
@@ -179,7 +189,7 @@ public class Patient extends AsyncTask<String[], Void, List<Patient>> {
             JsonObject jobj = (JsonObject) jsArr.get(i);
             System.out.println(jobj);
 
-            Patient paObj = new Patient(jobj.get("patientId").getAsInt(), jobj.get("name").getAsString(), jobj.get("faceId").getAsString());
+            Patient paObj = new Patient(jobj.get("patientId").getAsInt(), jobj.get("name").getAsString(), jobj.get("faceId").getAsString(),jobj.get("languge").getAsString());
 
             allpat.add(paObj);
 

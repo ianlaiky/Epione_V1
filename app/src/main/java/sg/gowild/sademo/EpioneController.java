@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 import FacialRecognition.FacialRecognitionConfiguration;
 import Hardware.EV3Configuration;
+import Language.English;
+import Language.SimplifiedChinese;
 import Model.Medicine;
 import Model.Patient;
 import Model.Prescription;
@@ -96,7 +98,18 @@ public class EpioneController {
                         Patient pt = getPatient(patientId);
                         app.Reminder = reminders.get(0);
                         app.Patient = pt;
+                        //if patient lang is chinese
 
+                        if(pt.getLanguage().equalsIgnoreCase("zh")){
+                            app.lang = new SimplifiedChinese();
+                            app.changeTTSLang();
+                        }else if (pt.getLanguage().equalsIgnoreCase("en")){
+
+                            app.lang = new English();
+                            app.changeTTSLang();
+                        }
+
+                        //app.AlertUser("警报警报 " + pt.getName() + ", 吃药的时间来了");
                         app.AlertUser(app.lang.getAlertUserResponse(pt.getName()));
 
                         //app.AlertUser("Alert Alert "+ pt.getName() + ", TIME TO TAKE MEDICINE !!");

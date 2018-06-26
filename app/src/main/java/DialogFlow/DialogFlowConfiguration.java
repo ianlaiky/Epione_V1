@@ -15,8 +15,7 @@ public class DialogFlowConfiguration {
 
     /* REFERRED TO DIALOGFLOW AGENT SETTINGS */
     public static final String DIALOGFLOW_CLIENT_ACCESS_TOKEN = "cb4c0d8c657847fb9be28a42855c3e32";
-
-
+                                                               //cb4c0d8c657847fb9be28a42855c3e32
     //for testing
     public static void main(String[] args) {
         System.out.println("Hello World");

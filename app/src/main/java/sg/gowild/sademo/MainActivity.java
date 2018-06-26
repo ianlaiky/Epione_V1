@@ -141,22 +141,18 @@ public class MainActivity extends AppCompatActivity {
         //uncomment once everything is done
 
         setUpConfigurations();
-
+        //
 
 
 //        new FacialRecognitionConfiguration(pic).execute("");
 
 //        new FacialRecognitionConfiguration().execute("");
 
-        epione.checkRemainder();
-
+       // epione.checkRemainder();
 
 
         //enable hotword
         startHotword();
-
-
-
 
     }
 
@@ -329,6 +325,8 @@ public class MainActivity extends AppCompatActivity {
         textToSpeech = new TextToSpeech(this, null);
     }
 
+
+
     //similar to RESTFUL Request
     /* LINK TO DIALOGFLOW */
     private void setupNlu(String client_token) {
@@ -496,6 +494,9 @@ public class MainActivity extends AppCompatActivity {
                     String originalSpeech = fulfillment.getSpeech();
 
                     String intentname = result.getMetadata().getIntentName();
+
+                    System.out.println(originalSpeech);
+
                     callIntent(intentname, originalSpeech);
 
                     // startTts(responseText);
@@ -507,7 +508,6 @@ public class MainActivity extends AppCompatActivity {
         };
         Threadings.runInBackgroundThread(runnable);
     }
-
 
 
 
@@ -542,6 +542,8 @@ public class MainActivity extends AppCompatActivity {
             epione.checkRemainder();
         } else {
             startTts(originalSpeech);
+            //startTts("你好!");
+            //
             //restart scheduling remainder
             epione.checkRemainder();
         }

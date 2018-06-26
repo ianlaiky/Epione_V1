@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import Language.English;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -472,7 +473,6 @@ public class Reminder extends AsyncTask<String[],Void,List<Reminder>>{
             temp.add(getNextFiveMinuteReminder());
             return temp;
         }
-
         return null;
     }
 

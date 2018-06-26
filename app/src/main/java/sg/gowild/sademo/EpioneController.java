@@ -97,6 +97,7 @@ public class EpioneController {
                         app.Reminder = reminders.get(0);
                         app.Patient = pt;
 
+
                         app.AlertUser("Alert Alert "+ pt.getName() + ", TIME TO TAKE MEDICINE !!");
                     }
 

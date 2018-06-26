@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        new FacialRecognitionConfiguration().execute("");
 
-       // epione.checkRemainder();
+        epione.checkRemainder();
 
 
         //enable hotword
@@ -323,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
     /*TO ENABLE TEXT TO SPEECH */
     private void setupTts() {
         textToSpeech = new TextToSpeech(this, null);
+        textToSpeech.setLanguage(Locale.SIMPLIFIED_CHINESE);
     }
 
 
@@ -387,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void startTts(String text) {
-        textToSpeech.setLanguage(Locale.SIMPLIFIED_CHINESE);
+
         // Start TTS
         //TextToSpeech.QUEUE_FLUSH - remove appening words when speaking
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
@@ -717,6 +718,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void AlertUser(String text) {
+        textToSpeech.setLanguage(Locale.SIMPLIFIED_CHINESE);
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
     public void AlertUserAddOn(String text){

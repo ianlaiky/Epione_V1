@@ -10,8 +10,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -122,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
 
     public Language lang = new Language();
 
+    //sound ping
+    SoundPool sp;
+    int soundId;
+
 
 
     //need a real android phone to work
@@ -164,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
     //==== SET UP CONFIGURATIONS ============================================================================
     private void setUpConfigurations() {
         setupViews();
+        setupSounds();
         //TODO:ONCE GET XIAOBAI,ENABLE THIS
         //setupXiaoBaiButton();
         setupAsr();
@@ -760,6 +767,19 @@ public class MainActivity extends AppCompatActivity {
         return cursor.getString(idx);
     }
 
+    public void setupSounds(){
+
+
+        sp = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+
+        /** soundId for Later handling of sound pool **/
+        soundId = sp.load(this, R.raw.sound1, 1); // in 2nd param u have to pass your desire ringtone
+
+
+        //to play sound; for reference only
+//        sp.play(soundId, 1, 1, 0, 0, 1);
+
+    }
 
     public void changeTTSLang(){
         textToSpeech.setLanguage(lang.getTtsLanguage());

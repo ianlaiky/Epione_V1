@@ -10,7 +10,7 @@ public class English extends Language {
     String RECONGNIZER_INTENT_LOCALE = "en";
     Locale ttsLanguage = Locale.ENGLISH;
     AIConfiguration.SupportedLanguages DIALOGFLOW_LANGUAGE = AIConfiguration.SupportedLanguages.English;
-    String SCAN_FACE_RESPONSE = "LET ME SCAN YOUR FACE";
+    String SCAN_FACE_RESPONSE = "PLEASE LOOK AT THE CAMERA FOR ME TO VERIFY.";
     String VERIFYING_FACE_RESPONSE = "VERIFYING FACE";
     String VERIFYING_FACE_FAIL_RESPONSE = "SORRY, PLEASE TRY AGAIN.";
 

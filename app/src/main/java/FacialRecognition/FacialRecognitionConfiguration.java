@@ -27,6 +27,54 @@ public class FacialRecognitionConfiguration extends AsyncTask<Object, Void, Bool
     static Uri ImageURI;
     static String faceId;
 
+    public static void ValidateFace(byte[] bytes) throws IOException{
+        //ImageURI = image;
+
+        String detectFaceResult = "";
+
+        OkHttpClient client = new OkHttpClient();
+
+        byte[] bttest = bytes;
+
+        MediaType fdf = MediaType.parse("application/octet-stream");
+        RequestBody body = RequestBody.create(fdf, bttest);
+
+
+//        RequestBody formBody = new FormBody.Builder()
+//                .add("url","https://i.imgur.com/9sAyPWE.jpg")
+//                .build();
+        Request request = new Request.Builder()
+                .url("https://southeastasia.api.cognitive.microsoft.com/face/v1.0/detect")
+
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Ocp-Apim-Subscription-Key", "f697d347019b4c74976466006f62d811")
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            detectFaceResult = response.body().string();
+            System.out.println(detectFaceResult + "print");
+            JSONArray jsonArray = new JSONArray(detectFaceResult);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+
+                JSONObject jsonObj = jsonArray.getJSONObject(i);
+                faceId = jsonObj.getString("faceId");
+                System.out.println(faceId + " FACE ID");
+
+            }
+
+
+            // Do something with the response.
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public static void method(File file) throws IOException {
         //ImageURI = image;
@@ -192,12 +240,12 @@ public class FacialRecognitionConfiguration extends AsyncTask<Object, Void, Bool
     @Override
     protected Boolean doInBackground(Object... objects) {
 
-        File file = (File) objects[0];
+        byte[] bytes = (byte[]) objects[0];
         String faceIdFromDB = (String) objects[1];
 
         try {
             //facial detection
-            method(file);
+            ValidateFace(bytes);
 
         } catch (IOException e) {
             e.printStackTrace();

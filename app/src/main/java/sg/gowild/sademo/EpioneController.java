@@ -136,17 +136,17 @@ public class EpioneController {
      * Check if patient is who they say they are
      *
      * @param pt - use patient  to get face id from patient
-     * @param imageFile - taken from User camera -
+     * @param bytes - taken from User camera -
      * @return isValidUser - to determine if user matches patient for authentication
      */
-    public boolean ValidatePatient(Patient pt, File imageFile)
+    public boolean ValidatePatient(Patient pt, byte[] bytes)
     {
 
 //        File finalFile = new File(getRealPathFromURI(tempUri));
 //        Path path = Paths.get(pathToPhoto.getPath());
 //        new FacialRecognitionConfiguration(path).execute("");
         try {
-            boolean isValid = new FacialRecognitionConfiguration().execute(imageFile,pt.getFaceId()).get();
+            boolean isValid = new FacialRecognitionConfiguration().execute(bytes,pt.getFaceId()).get();
             return isValid;
 
         } catch (InterruptedException e) {

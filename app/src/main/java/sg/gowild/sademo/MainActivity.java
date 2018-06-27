@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
     private SpeechRecognizer speechRecognizer;
 
     // TTS Variables
-    private TextToSpeech textToSpeech;
+    public static TextToSpeech textToSpeech;
 
     // NLU Variables
     //AIDataService part of google
@@ -120,7 +120,9 @@ public class MainActivity extends AppCompatActivity {
     public Patient Patient;
     public Reminder Reminder;
 
-    public Language lang = new Language();
+    public static Language lang = new Language();
+
+
 
 
 
@@ -140,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+
+
+
         //TODO:FUNCTION TO CONSTANTLY CHECK FOR REMAINDER
         //AND ALERT TO XIAOBAI
         //uncomment once everything is done
@@ -151,8 +156,9 @@ public class MainActivity extends AppCompatActivity {
 //        new FacialRecognitionConfiguration(pic).execute("");
 
 //        new FacialRecognitionConfiguration().execute("");
-
+        //TODO:MAKE SURE CODE BELOW IS UNCOMMENT FOR WHOLE FLOW TO WORK
         epione.checkRemainder();
+
 
 
         //enable hotword
@@ -538,7 +544,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
             //step3.verify user first by facial recognition
-            startCameraIntent();
+            //startCameraIntent();
+
+
+
+            CameraActivity.patientFaceID = Patient.getFaceId();
+            startActivityForResult(new Intent(MainActivity.this, CameraActivity.class), CAMERA_REQUEST);
+
 
         } else if (intentname.equalsIgnoreCase("medicine.close")) {
             //startTts("Okay,Closing Cabinet. I will remind you for when's its time for your next medicine");
@@ -566,46 +578,45 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        //textToSpeech.speak("Verifying Face",TextToSpeech.QUEUE_FLUSH,null);
-        textToSpeech.speak(lang.getVERIFYING_FACE_RESPONSE(),TextToSpeech.QUEUE_FLUSH,null);
-        while (textToSpeech.isSpeaking())
-        {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
+
+
+        Boolean iv = false;
         //check if is from photo
         if (requestCode == CAMERA_REQUEST) {
 
-            //photo taken
-            Bitmap bitmap =null;
-            try {
-                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),photoURI);
-                 //bitmap = RotateBitmap(bitmap,-90);
-                //imageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //use photo send to server
-            final Bitmap photo = bitmap;
 
-            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-            Uri tempUri = getImageUri(getApplicationContext(), photo);
+                if(resultCode == CameraActivity.FACIAL_RECOGNITON_RESULT){
+                    iv = (Boolean) data.getExtras().get(CameraActivity.FACIAL_RECOGNITION_DATA);
+                }
 
-            // CALL THIS METHOD TO GET THE ACTUAL PATH
-            final File finalFile = new File(getRealPathFromURI(tempUri));
+//            //photo taken
+//            Bitmap bitmap =null;
+//            try {
+//                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),photoURI);
+//                 //bitmap = RotateBitmap(bitmap,-90);
+//                //imageView.setImageBitmap(bitmap);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            //use photo send to server
+//            final Bitmap photo = bitmap;
+//
+//            // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+//            Uri tempUri = getImageUri(getApplicationContext(), photo);
+//
+//            // CALL THIS METHOD TO GET THE ACTUAL PATH
+//            final File finalFile = new File(getRealPathFromURI(tempUri));
 
 
-
+                final Boolean isValid = iv;
 
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
                         //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
-                        if (epione.ValidatePatient(Patient, finalFile)) //if is correct user
+                        //epione.ValidatePatient(Patient, finalFile)
+                        if (isValid == true) //if is correct user
                         {
 
 
@@ -661,7 +672,9 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                startCameraIntent();
+                                //startCameraIntent();
+                                CameraActivity.patientFaceID = Patient.getFaceId();
+                                startActivityForResult(new Intent(MainActivity.this, CameraActivity.class), CAMERA_REQUEST);
                             }
                     }
                 };

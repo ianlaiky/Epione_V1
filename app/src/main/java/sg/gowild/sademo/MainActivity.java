@@ -1,8 +1,6 @@
 package sg.gowild.sademo;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,9 +8,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.media.SoundPool;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.RecognitionListener;
@@ -21,7 +22,6 @@ import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,38 +29,24 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
-
-import Database.DBController;
 import DialogFlow.DialogFlowConfiguration;
-import FacialRecognition.FacialRecognitionConfiguration;
 import Hardware.EV3Configuration;
+import Language.Language;
 import Model.Medicine;
 import Model.Patient;
 import Model.Prescription;
 import Model.Reminder;
-import Language.*;
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import ai.api.AIServiceException;
@@ -69,18 +55,6 @@ import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
 import ai.api.model.Result;
 import ai.kitt.snowboy.SnowboyDetect;
-import okhttp3.MediaType;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -124,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    //sound ping
+    SoundPool sp;
+    int soundId;
 
 
     //need a real android phone to work
@@ -170,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
     //==== SET UP CONFIGURATIONS ============================================================================
     private void setUpConfigurations() {
         setupViews();
+        setupSounds();
         //TODO:ONCE GET XIAOBAI,ENABLE THIS
         //setupXiaoBaiButton();
         setupAsr();
@@ -336,7 +314,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     //similar to RESTFUL Request
     /* LINK TO DIALOGFLOW */
     private void setupNlu(String client_token) {
@@ -428,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.INVISIBLE);
             }
         };
-        Threadings.runInMainThread(this,runnable1);
+        Threadings.runInMainThread(this, runnable1);
     }
 
     private void startHotword() {
@@ -526,7 +503,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public void callIntent(String intentname, String originalSpeech) {
         //if the intent is to give user medicine
         if (intentname.equalsIgnoreCase("medicine.give")) {
@@ -620,32 +596,30 @@ public class MainActivity extends AppCompatActivity {
                         {
 
 
+                        //get patient prescription
+                        String pid = String.valueOf(Patient.getPatientId());
 
-                            //get patient prescription
-                            String pid = String.valueOf(Patient.getPatientId());
+                        String ReminderPrescriptionID = String.valueOf(Reminder.getPrescriptionId());
+                        Prescription PatientPrescription = epione.getPatientPrescriptionBasedOnRemID(ReminderPrescriptionID);
 
-                            String ReminderPrescriptionID =  String.valueOf(Reminder.getPrescriptionId());
-                            Prescription PatientPrescription = epione.getPatientPrescriptionBasedOnRemID(ReminderPrescriptionID);
-
-                            String MedID =  String.valueOf(PatientPrescription.getMedId());
-                            System.out.println("mam,amamammama "+MedID);
-                            Medicine medicine = epione.getMedicineBasedOnPrescription(MedID);
-
-
-                            String medName = medicine.getMedName();
+                        String MedID = String.valueOf(PatientPrescription.getMedId());
+                        System.out.println("mam,amamammama " + MedID);
+                        Medicine medicine = epione.getMedicineBasedOnPrescription(MedID);
 
 
-                            //then read out instruction to user
-                            //int timeToTakePerDay = PatientPrescription.getInstruction();
-                            int dosage = PatientPrescription.getDosage();
-                            String remarks = PatientPrescription.getRemarks();
-                           // "Please take Panadol from box 1 and take only 2 pills."
+                        String medName = medicine.getMedName();
+
+
+                        //then read out instruction to user
+                        //int timeToTakePerDay = PatientPrescription.getInstruction();
+                        int dosage = PatientPrescription.getDosage();
+                        String remarks = PatientPrescription.getRemarks();
+                        // "Please take Panadol from box 1 and take only 2 pills."
 
 
                         //textToSpeech.speak("Please take " + medName + "from Box 1 and take only"+ dosage + " " + medicine.getMetricValue(),TextToSpeech.QUEUE_FLUSH,null);
-                            textToSpeech.speak(lang.getGiveMedInstructionResponse("1",medName,dosage,medicine.getMetricValue()),TextToSpeech.QUEUE_FLUSH,null);
-                        while (textToSpeech.isSpeaking())
-                        {
+                        textToSpeech.speak(lang.getGiveMedInstructionResponse("1", medName, dosage, medicine.getMetricValue()), TextToSpeech.QUEUE_FLUSH, null);
+                        while (textToSpeech.isSpeaking()) {
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
@@ -653,24 +627,22 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
 
-                            //open cabinet box
-                            System.out.println("Epione open box");
+                        //open cabinet box
+                        System.out.println("Epione open box");
 
                         //TODO
-                            epione.openBox();
+                        epione.openBox();
+                    } else  //if not patient ask to try again
+                    {
+                        //textToSpeech.speak("Sorry, Could you please try that again ? ",TextToSpeech.QUEUE_FLUSH,null);
+                        textToSpeech.speak(lang.getVERIFYING_FACE_FAIL_RESPONSE(), TextToSpeech.QUEUE_FLUSH, null);
+                        while (textToSpeech.isSpeaking()) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
-                        else  //if not patient ask to try again
-                            {
-                                //textToSpeech.speak("Sorry, Could you please try that again ? ",TextToSpeech.QUEUE_FLUSH,null);
-                                textToSpeech.speak(lang.getVERIFYING_FACE_FAIL_RESPONSE(),TextToSpeech.QUEUE_FLUSH,null);
-                                while (textToSpeech.isSpeaking())
-                                {
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
 
                                 //startCameraIntent();
                                 CameraActivity.patientFaceID = Patient.getFaceId();
@@ -679,8 +651,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
 
-                Threadings.runInBackgroundThread(runnable);
-                startHotword();
+            Threadings.runInBackgroundThread(runnable);
+            startHotword();
 
             Runnable runnable1 = new Runnable() {
                 @Override
@@ -688,24 +660,22 @@ public class MainActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             };
-            Threadings.runInMainThread(this,runnable1);
+            Threadings.runInMainThread(this, runnable1);
 
         }
     }
 
-    public static Bitmap RotateBitmap(Bitmap source, float angle)
-    {
+    public static Bitmap RotateBitmap(Bitmap source, float angle) {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
 
-    private void startCameraIntent()
-    {
+    private void startCameraIntent() {
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 
-        if(cameraIntent.resolveActivity(getPackageManager()) != null){
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
             //Create a file to store the image
             File photoFile = null;
             try {
@@ -717,10 +687,10 @@ public class MainActivity extends AppCompatActivity {
             if (photoFile != null) {
 
                 photoURI = FileProvider.getUriForFile(this.getApplication().getApplicationContext(),
-                       "sg.gowild.sademo.provider", photoFile);
+                        "sg.gowild.sademo.provider", photoFile);
 
                 //uncomment below for xiaobai, comment above
-               // photoURI = Uri.fromFile(photoFile);
+                // photoURI = Uri.fromFile(photoFile);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         photoURI);
                 startActivityForResult(cameraIntent,
@@ -750,8 +720,9 @@ public class MainActivity extends AppCompatActivity {
     public void AlertUser(String text) {
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
-    public void AlertUserAddOn(String text){
-        textToSpeech.speak(text, TextToSpeech.QUEUE_ADD,null);
+
+    public void AlertUserAddOn(String text) {
+        textToSpeech.speak(text, TextToSpeech.QUEUE_ADD, null);
     }
 //    public void AddPauseInTTS(){
 //        textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
@@ -773,8 +744,21 @@ public class MainActivity extends AppCompatActivity {
         return cursor.getString(idx);
     }
 
+    public void setupSounds() {
 
-    public void changeTTSLang(){
+
+        sp = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+
+        /** soundId for Later handling of sound pool **/
+        soundId = sp.load(this, R.raw.sound1, 1); // in 2nd param u have to pass your desire ringtone
+
+
+        //to play sound; for reference only
+//        sp.play(soundId, 1, 1, 0, 0, 1);
+
+    }
+
+    public void changeTTSLang() {
         textToSpeech.setLanguage(lang.getTtsLanguage());
     }
 

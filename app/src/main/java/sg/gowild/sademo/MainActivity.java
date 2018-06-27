@@ -584,7 +584,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bitmap =null;
             try {
                  bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),photoURI);
-                 bitmap = RotateBitmap(bitmap,-90);
+                 //bitmap = RotateBitmap(bitmap,-90);
                 //imageView.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -704,7 +704,10 @@ public class MainActivity extends AppCompatActivity {
             if (photoFile != null) {
 
                 photoURI = FileProvider.getUriForFile(this.getApplication().getApplicationContext(),
-                        "sg.gowild.sademo.provider", photoFile);
+                       "sg.gowild.sademo.provider", photoFile);
+
+                //uncomment below for xiaobai, comment above
+               // photoURI = Uri.fromFile(photoFile);
                 cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
                         photoURI);
                 startActivityForResult(cameraIntent,
@@ -737,9 +740,9 @@ public class MainActivity extends AppCompatActivity {
     public void AlertUserAddOn(String text){
         textToSpeech.speak(text, TextToSpeech.QUEUE_ADD,null);
     }
-    public void AddPauseInTTS(){
-        textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
-    }
+//    public void AddPauseInTTS(){
+//        textToSpeech.playSilentUtterance(1000, TextToSpeech.QUEUE_ADD, null);
+//    }
 
     //========================================================================================================
 

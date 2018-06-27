@@ -256,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
                 //when it has dectect end of speech
                 //show progress bar
                 progressBar.setVisibility(View.VISIBLE);
+                sp.play(soundId, 1, 1, 0, 0, 1);
             }
 
             @Override
@@ -449,7 +450,7 @@ public class MainActivity extends AppCompatActivity {
                 audioRecord.stop();
                 audioRecord.release();
                 Log.d("hotword", "stop listening to hotword");
-
+                sp.play(soundId, 1, 1, 0, 0, 1);
                 // after hotword is detected,enable ASR
                 startAsr();
             }

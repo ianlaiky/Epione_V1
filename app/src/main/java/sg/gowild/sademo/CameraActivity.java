@@ -15,6 +15,7 @@ import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -207,41 +208,50 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
                 //holder.setFixedSize(100,100);
                 mCamera.setPreviewDisplay(holder);
                 if (mIsCapturing) {
-                    mCamera.setFaceDetectionListener(new Camera.FaceDetectionListener() {
+                    mCamera.startPreview();
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
                         @Override
-                        public void onFaceDetection(Camera.Face[] faces, Camera camera) {
-                            System.out.println("FAELOOP");
-                            System.out.println(faces.length);
-
-                            if(faces.length > 0){
-                                if(faces[0].score == 100){
-                                    mCamera.stopFaceDetection();
+                        public void run() {
+                            // Do something after 5s = 5000ms
+                          mCamera.stopFaceDetection();
                                     MainActivity.textToSpeech.speak(MainActivity.lang.getVERIFYING_FACE_RESPONSE(), TextToSpeech.QUEUE_FLUSH,null);
-                                    System.out.println("fafjafakfjakjfakjf " + faces[0].score);
+
                                     captureImage();
 
                                     //mCamera.stopPreview();
                                     progressBar.setVisibility(View.VISIBLE);
                                     //mCameraPreview.setVisibility(View.INVISIBLE);
-                                }
-                            }
-
-
-
-
-
 
                         }
-                    });
-                    mCamera.startPreview();
-                    Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
-                            mCamera.startFaceDetection();
-                        }
-                    };
-                    Thread thread = new Thread(runnable);
-                    thread.start();
+                    }, 5000);
+//                    mCamera.startFaceDetection();
+//                    mCamera.setFaceDetectionListener(new Camera.FaceDetectionListener() {
+//                        @Override
+//                        public void onFaceDetection(Camera.Face[] faces, Camera camera) {
+//                            System.out.println("FAELOOP");
+//                            System.out.println(faces.length);
+//
+//                            if(faces.length > 0){
+//                                if(faces[0].score == 100){
+//                                    mCamera.stopFaceDetection();
+//                                    MainActivity.textToSpeech.speak(MainActivity.lang.getVERIFYING_FACE_RESPONSE(), TextToSpeech.QUEUE_FLUSH,null);
+//                                    System.out.println("fafjafakfjakjfakjf " + faces[0].score);
+//                                    captureImage();
+//
+//                                    //mCamera.stopPreview();
+//                                    progressBar.setVisibility(View.VISIBLE);
+//                                    //mCameraPreview.setVisibility(View.INVISIBLE);
+//                                }
+//                            }
+//
+//
+//
+//
+//
+//
+//                        }
+//                    });
 
                 }
             } catch (IOException e) {

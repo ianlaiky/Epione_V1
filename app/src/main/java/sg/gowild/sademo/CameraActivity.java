@@ -7,15 +7,12 @@ import java.util.concurrent.ExecutionException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -80,7 +77,6 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_camera);
 
 
@@ -140,13 +136,11 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
                 for (int i = 0; i < cameraCount && cameraIndex == -1; i++) {
                     Camera.CameraInfo info = new Camera.CameraInfo();
                     Camera.getCameraInfo(i, info);
-                    if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                    if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                         cameraIndex = i;
                     }
                 }
                 if (cameraIndex != -1) {}
-
-
 
                 mCamera = Camera.open(cameraIndex);
                 //set camera to continually auto-focus
@@ -154,25 +148,9 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
 //*EDIT*//params.setFocusMode("continuous-picture");
 //It is better to use defined constraints as opposed to String, thanks to AbdelHady
                 params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-//                params.set("orientation", "portrait");
-
-                System.out.println("EQSDRFSFDSF");
-                System.out.println(this.getResources().getConfiguration().orientation);
-                System.out.println(Configuration.ORIENTATION_LANDSCAPE);
-                System.out.println(Configuration.ORIENTATION_PORTRAIT);
-
-//                if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
-//                    params.set("orientation", "landscape");
-//                    mCamera.setDisplayOrientation(90);
-//                    params.setRotation(90);
-//                }
-
                 mCamera.setParameters(params);
                 mCamera.setPreviewDisplay(mCameraPreview.getHolder());
                 if (mIsCapturing) {
-//                    mCamera.stopPreview();
-//
-//                    mCamera.setDisplayOrientation(90);
                     mCamera.startPreview();
                 }
             } catch (Exception e) {
@@ -204,54 +182,36 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
     public void surfaceCreated(SurfaceHolder holder) {
         if (mCamera != null) {
             try {
-//                mCamera.setDisplayOrientation(90);
+                mCamera.setDisplayOrientation(90);
                 //holder.setFixedSize(100,100);
                 mCamera.setPreviewDisplay(holder);
                 if (mIsCapturing) {
                     mCamera.startPreview();
-                    final Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
+                    mCamera.startFaceDetection();
+                    mCamera.setFaceDetectionListener(new Camera.FaceDetectionListener() {
                         @Override
-                        public void run() {
-                            // Do something after 5s = 5000ms
-                          mCamera.stopFaceDetection();
-                                    MainActivity.textToSpeech.speak(MainActivity.lang.getVERIFYING_FACE_RESPONSE(), TextToSpeech.QUEUE_FLUSH,null);
+                        public void onFaceDetection(Camera.Face[] faces, Camera camera) {
 
+                            if(faces.length > 0){
+                                if(faces[0].score == 100){
+                                    mCamera.stopFaceDetection();
+                                    MainActivity.textToSpeech.speak(MainActivity.lang.getVERIFYING_FACE_RESPONSE(), TextToSpeech.QUEUE_FLUSH,null);
+                                    System.out.println("fafjafakfjakjfakjf " + faces[0].score);
                                     captureImage();
 
                                     //mCamera.stopPreview();
                                     progressBar.setVisibility(View.VISIBLE);
                                     //mCameraPreview.setVisibility(View.INVISIBLE);
+                                }
+                            }
+
+
+
+
+
 
                         }
-                    }, 5000);
-//                    mCamera.startFaceDetection();
-//                    mCamera.setFaceDetectionListener(new Camera.FaceDetectionListener() {
-//                        @Override
-//                        public void onFaceDetection(Camera.Face[] faces, Camera camera) {
-//                            System.out.println("FAELOOP");
-//                            System.out.println(faces.length);
-//
-//                            if(faces.length > 0){
-//                                if(faces[0].score == 100){
-//                                    mCamera.stopFaceDetection();
-//                                    MainActivity.textToSpeech.speak(MainActivity.lang.getVERIFYING_FACE_RESPONSE(), TextToSpeech.QUEUE_FLUSH,null);
-//                                    System.out.println("fafjafakfjakjfakjf " + faces[0].score);
-//                                    captureImage();
-//
-//                                    //mCamera.stopPreview();
-//                                    progressBar.setVisibility(View.VISIBLE);
-//                                    //mCameraPreview.setVisibility(View.INVISIBLE);
-//                                }
-//                            }
-//
-//
-//
-//
-//
-//
-//                        }
-//                    });
+                    });
 
                 }
             } catch (IOException e) {

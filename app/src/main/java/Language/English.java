@@ -39,7 +39,7 @@ public class English extends Language {
 
     @Override
     public String getAlertUserResponse(String patientName){
-        return  "ALERT ALERT "+ patientName + ", TIME TO TAKE MEDICINE";
+        return   patientName + ", TIME TO TAKE MEDICINE";
     }
 
     @Override

@@ -2,6 +2,8 @@ package sg.gowild.sademo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
@@ -13,6 +15,7 @@ import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -21,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import FacialRecognition.FacialRecognitionConfiguration;
@@ -39,6 +43,7 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
     private boolean mIsCapturing;
 
     private ProgressBar progressBar;
+    private TextView textView;
 
      static String patientFaceID;
 
@@ -83,8 +88,11 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
         progressBar = findViewById(R.id.progressbar);
         progressBar.setVisibility(View.INVISIBLE);
 
+        textView = (TextView)findViewById(R.id.label_timer);
+
         mCameraImage = (ImageView) findViewById(R.id.camera_image_view);
         mCameraImage.setVisibility(View.INVISIBLE);
+
 
         mCameraPreview = (SurfaceView) findViewById(R.id.preview_view);
         final SurfaceHolder surfaceHolder = mCameraPreview.getHolder();
@@ -93,6 +101,9 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
 
         mCaptureImageButton = (Button) findViewById(R.id.capture_image_button);
         mCaptureImageButton.setOnClickListener(mCaptureImageButtonClickListener);
+
+
+
 
         Button doneButton = (Button) findViewById(R.id.done_button);
         doneButton.setOnClickListener(mDoneButtonClickListener);
@@ -182,36 +193,66 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
     public void surfaceCreated(SurfaceHolder holder) {
         if (mCamera != null) {
             try {
-                mCamera.setDisplayOrientation(90);
+                //mCamera.setDisplayOrientation(90);
                 //holder.setFixedSize(100,100);
                 mCamera.setPreviewDisplay(holder);
                 if (mIsCapturing) {
-                    mCamera.startPreview();
-                    mCamera.startFaceDetection();
-                    mCamera.setFaceDetectionListener(new Camera.FaceDetectionListener() {
+                         final int count = 5;
+                    new Timer().scheduleAtFixedRate(new TimerTask() {
+                        int c = count;
                         @Override
-                        public void onFaceDetection(Camera.Face[] faces, Camera camera) {
-
-                            if(faces.length > 0){
-                                if(faces[0].score == 100){
-                                    mCamera.stopFaceDetection();
-                                    MainActivity.textToSpeech.speak(MainActivity.lang.getVERIFYING_FACE_RESPONSE(), TextToSpeech.QUEUE_FLUSH,null);
-                                    System.out.println("fafjafakfjakjfakjf " + faces[0].score);
-                                    captureImage();
-
-                                    //mCamera.stopPreview();
-                                    progressBar.setVisibility(View.VISIBLE);
-                                    //mCameraPreview.setVisibility(View.INVISIBLE);
-                                }
+                        public void run() {
+                            textView.setText(String.valueOf(c));
+                            c--;
+                            if(c==0){
+                                this.cancel();
                             }
 
 
+                        }
+                    }, 0, 1000);//put here time 1000 milliseconds=1 second
 
+                    mCamera.startPreview();
 
-
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            textView.setVisibility(View.INVISIBLE);
+                            MainActivity.textToSpeech.speak(MainActivity.lang.getVERIFYING_FACE_RESPONSE(), TextToSpeech.QUEUE_FLUSH,null);
+                            System.out.println("fafjafakfjakjfakjf " );
+                                    captureImage();
+                                    progressBar.setVisibility(View.VISIBLE);
+                                    mCameraPreview.setVisibility(View.INVISIBLE);
 
                         }
-                    });
+                    }, 5000);
+
+
+//                    mCamera.startFaceDetection();
+//                    mCamera.setFaceDetectionListener(new Camera.FaceDetectionListener() {
+//                        @Override
+//                        public void onFaceDetection(Camera.Face[] faces, Camera camera) {
+//
+//                            if(faces.length > 0){
+//                                if(faces[0].score == 100){
+//                                    mCamera.stopFaceDetection();
+//                                    MainActivity.textToSpeech.speak(MainActivity.lang.getVERIFYING_FACE_RESPONSE(), TextToSpeech.QUEUE_FLUSH,null);
+//                                    System.out.println("fafjafakfjakjfakjf " + faces[0].score);
+//                                    captureImage();
+//
+//                                    //mCamera.stopPreview();
+//                                    progressBar.setVisibility(View.VISIBLE);
+//                                    //mCameraPreview.setVisibility(View.INVISIBLE);
+//                                }
+//                            }
+//
+//
+//
+//
+//
+//
+//                        }
+//                    });
 
                 }
             } catch (IOException e) {
@@ -245,7 +286,7 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
 
         //convert byte to bitmap
         Bitmap bitmap = BitmapFactory.decodeByteArray(mCameraData, 0, mCameraData.length);
-        bitmap = RotateBitmap(bitmap,-90);
+       // bitmap = RotateBitmap(bitmap,-90);
 
         //bitmap to byte
         ByteArrayOutputStream stream = new ByteArrayOutputStream();

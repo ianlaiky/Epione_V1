@@ -9,8 +9,8 @@ public class SimplifiedChinese extends Language {
     String RECONGNIZER_INTENT_LOCALE = "zh";
     Locale ttsLanguage = Locale.SIMPLIFIED_CHINESE;
     AIConfiguration.SupportedLanguages DIALOGFLOW_LANGUAGE = AIConfiguration.SupportedLanguages.ChineseChina;
-    String SCAN_FACE_RESPONSE = "让我扫描你的脸";
-    String VERIFYING_FACE_RESPONSE = "现在验证脸部";
+    String SCAN_FACE_RESPONSE = "请面对摄像头，进行脸部验证" ;
+    String VERIFYING_FACE_RESPONSE = "现在正在进行验证";
     String VERIFYING_FACE_FAIL_RESPONSE = "抱歉，请再试一次";
 
     public Locale getTtsLanguage() {
@@ -45,7 +45,7 @@ public class SimplifiedChinese extends Language {
     @Override
     public String getAlertUserResponse(String patientName) {
         return
-                "警报警报 " + patientName + ", 吃药的时间来了";
+                 patientName + ", 吃药的时间来了";
     }
 
     @Override

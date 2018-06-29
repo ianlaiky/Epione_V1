@@ -35,8 +35,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="invisible"
-            android:layout_marginTop="100pt"
+            android:layout_gravity="center"
+            android:gravity="center"
             />
+
+        <TextView
+            android:id="@+id/label_timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#ffff"
+            android:textSize="50dp"
+            />
+
+
 
     </FrameLayout>
 

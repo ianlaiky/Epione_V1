@@ -54,15 +54,6 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
         }
     };
 
-    private OnClickListener mRecaptureImageButtonClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            setupImageCapture();
-        }
-    };
-
-
-
 
     private OnClickListener mDoneButtonClickListener = new OnClickListener() {
         @Override
@@ -103,8 +94,6 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
         mCaptureImageButton.setOnClickListener(mCaptureImageButtonClickListener);
 
 
-
-
         Button doneButton = (Button) findViewById(R.id.done_button);
         doneButton.setOnClickListener(mDoneButtonClickListener);
 
@@ -141,27 +130,29 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
         if (mCamera == null) {
             try {
 
-
+                //switch to camera view(either front or back)
                 int cameraIndex = -1;
                 int cameraCount = Camera.getNumberOfCameras();
                 for (int i = 0; i < cameraCount && cameraIndex == -1; i++) {
                     Camera.CameraInfo info = new Camera.CameraInfo();
                     Camera.getCameraInfo(i, info);
-                    if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                                                    //change to what you want (CAMERA_FACING_FRONT,CAMERA_FACING_BACK)
+                    if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                         cameraIndex = i;
                     }
                 }
                 if (cameraIndex != -1) {}
-
                 mCamera = Camera.open(cameraIndex);
+
                 //set camera to continually auto-focus
                 Camera.Parameters params = mCamera.getParameters();
-//*EDIT*//params.setFocusMode("continuous-picture");
-//It is better to use defined constraints as opposed to String, thanks to AbdelHady
                 params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
                 mCamera.setParameters(params);
+
+                //set view of camera
                 mCamera.setPreviewDisplay(mCameraPreview.getHolder());
                 if (mIsCapturing) {
+                    //start preview
                     mCamera.startPreview();
                 }
             } catch (Exception e) {
@@ -183,21 +174,22 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
     }
 
 
-
-
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+
+        //once preview is started
         if (mCamera != null) {
             try {
                 //mCamera.setDisplayOrientation(90);
-                //holder.setFixedSize(100,100);
                 mCamera.setPreviewDisplay(holder);
                 if (mIsCapturing) {
-                         final int count = 5;
+
+                    //create a timer for label to count down to take picture
+                    final int count = 5;
                     new Timer().scheduleAtFixedRate(new TimerTask() {
                         int c = count;
                         @Override
@@ -212,8 +204,11 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
                         }
                     }, 0, 1000);//put here time 1000 milliseconds=1 second
 
+                    //start preview for user to view
                     mCamera.startPreview();
 
+                    //function is called after 5 seconds
+                    //takes a photo and processes back to MAINACTIVITY
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -227,7 +222,7 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
                         }
                     }, 5000);
 
-
+//                    //USING FACE DETECTION
 //                    mCamera.startFaceDetection();
 //                    mCamera.setFaceDetectionListener(new Camera.FaceDetectionListener() {
 //                        @Override
@@ -268,25 +263,31 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
 
 
     private void captureImage() {
+        //TAKES A PICTURE
         mCamera.takePicture(null, null, this);
     }
 
+
+    //CODE
     public static final String FACIAL_RECOGNITION_DATA = "fr_DATA";
     public static final int FACIAL_RECOGNITON_RESULT = 888;
 
 
     @Override
+    /*
+    * ONCE mCamera.takePicture(null, null, this); IS CALLED
+    * WILL CALL FUNCTION
+    * */
     public void onPictureTaken(byte[] data, Camera camera) {
 
-        //textToSpeech.speak("Verifying Face",TextToSpeech.QUEUE_FLUSH,null);
-
-
+        //GET DATA OF PICTURE
         mCameraData = data;
 
 
         //convert byte to bitmap
         Bitmap bitmap = BitmapFactory.decodeByteArray(mCameraData, 0, mCameraData.length);
        // bitmap = RotateBitmap(bitmap,-90);
+        bitmap = Bitmap.createScaledBitmap(bitmap,200,200,true);
 
         //bitmap to byte
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -300,7 +301,10 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
         //AND PASS DATA TO MAIN ACTIVITY
         try {
             System.out.println("gagagagagagaa" + patientFaceID);
+            //DETERMINE IF PHOTO IS VALID PATIENT
             boolean isValid = new FacialRecognitionConfiguration().execute(byteArray,patientFaceID).get();
+
+            //PASS DATA BACK TO MAIN ACTICIVIY
             Intent intent = new Intent();
             intent.putExtra(FACIAL_RECOGNITION_DATA,isValid);
             setResult(FACIAL_RECOGNITON_RESULT,intent);
@@ -310,11 +314,6 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-
-
-
-        //setupImageDisplay();
     }
 
 

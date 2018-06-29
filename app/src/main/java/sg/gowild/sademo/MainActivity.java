@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         setUpConfigurations();
         //
 
+        //enable hotword
+        startHotword();
 
 //        new FacialRecognitionConfiguration(pic).execute("");
 
@@ -136,10 +138,6 @@ public class MainActivity extends AppCompatActivity {
         //TODO:MAKE SURE CODE BELOW IS UNCOMMENT FOR WHOLE FLOW TO WORK
         epione.checkRemainder();
 
-
-
-        //enable hotword
-        startHotword();
 
     }
 
@@ -409,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
         Threadings.runInMainThread(this, runnable1);
     }
 
-    private void startHotword() {
+    public void startHotword() {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -542,9 +540,9 @@ public class MainActivity extends AppCompatActivity {
             //restart checking remainder
             epione.checkRemainder();
         } else {
+            epione.executor.shutdown();
             startTts(originalSpeech);
             //startTts("你好!");
-            //
             //restart scheduling remainder
             epione.checkRemainder();
         }
@@ -554,15 +552,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-
-
-
         Boolean iv = false;
         //check if is from photo
         if (requestCode == CAMERA_REQUEST) {
-
-
                 if(resultCode == CameraActivity.FACIAL_RECOGNITON_RESULT){
                     iv = (Boolean) data.getExtras().get(CameraActivity.FACIAL_RECOGNITION_DATA);
                 }
@@ -585,76 +577,10 @@ public class MainActivity extends AppCompatActivity {
 //            // CALL THIS METHOD TO GET THE ACTUAL PATH
 //            final File finalFile = new File(getRealPathFromURI(tempUri));
 
-
                 final Boolean isValid = iv;
 
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
-                        //epione.ValidatePatient(Patient, finalFile)
-                        if (isValid == true) //if is correct user
-                        {
-
-
-                        //get patient prescription
-                        String pid = String.valueOf(Patient.getPatientId());
-
-                        String ReminderPrescriptionID = String.valueOf(Reminder.getPrescriptionId());
-                        Prescription PatientPrescription = epione.getPatientPrescriptionBasedOnRemID(ReminderPrescriptionID);
-
-                        String MedID = String.valueOf(PatientPrescription.getMedId());
-                        System.out.println("mam,amamammama " + MedID);
-                        Medicine medicine = epione.getMedicineBasedOnPrescription(MedID);
-
-
-                        String medName = medicine.getMedName();
-
-
-                        //then read out instruction to user
-                        //int timeToTakePerDay = PatientPrescription.getInstruction();
-                        int dosage = PatientPrescription.getDosage();
-                        String remarks = PatientPrescription.getRemarks();
-                        // "Please take Panadol from box 1 and take only 2 pills."
-
-
-                        //textToSpeech.speak("Please take " + medName + "from Box 1 and take only"+ dosage + " " + medicine.getMetricValue(),TextToSpeech.QUEUE_FLUSH,null);
-                        textToSpeech.speak(lang.getGiveMedInstructionResponse("1", medName, dosage, medicine.getMetricValue()), TextToSpeech.QUEUE_FLUSH, null);
-                        while (textToSpeech.isSpeaking()) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        //open cabinet box
-                        System.out.println("Epione open box");
-
-                        //TODO
-                        epione.openBox();
-                    } else  //if not patient ask to try again
-                    {
-                        //textToSpeech.speak("Sorry, Could you please try that again ? ",TextToSpeech.QUEUE_FLUSH,null);
-                        textToSpeech.speak(lang.getVERIFYING_FACE_FAIL_RESPONSE(), TextToSpeech.QUEUE_FLUSH, null);
-                        while (textToSpeech.isSpeaking()) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                                //startCameraIntent();
-                                CameraActivity.patientFaceID = Patient.getFaceId();
-                                startActivityForResult(new Intent(MainActivity.this, CameraActivity.class), CAMERA_REQUEST);
-                            }
-                    }
-                };
-
-            Threadings.runInBackgroundThread(runnable);
-            startHotword();
-
+                giveMedInstructions(isValid);
+                //hide progress bar
             Runnable runnable1 = new Runnable() {
                 @Override
                 public void run() {
@@ -731,19 +657,6 @@ public class MainActivity extends AppCompatActivity {
 
     //========================================================================================================
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
-    public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        return cursor.getString(idx);
-    }
 
     public void setupSounds() {
 
@@ -756,6 +669,84 @@ public class MainActivity extends AppCompatActivity {
 
         //to play sound; for reference only
 //        sp.play(soundId, 1, 1, 0, 0, 1);
+
+    }
+
+
+    /**
+     *
+     * @param isValid
+     *Give med instructions to patient
+     */
+    private void giveMedInstructions(Boolean isValid)
+    {
+        final Boolean isPatient = isValid;
+
+//        Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+                //TODO: CALL FACIAL RECOGNITION API AND VERIFIY IF IS CORRECT USER
+                //epione.ValidatePatient(Patient, finalFile)
+                if (isPatient) //if is correct user
+                {
+                    //get patient prescription
+                    String pid = String.valueOf(Patient.getPatientId());
+
+                    String ReminderPrescriptionID = String.valueOf(Reminder.getPrescriptionId());
+                    Prescription PatientPrescription = epione.getPatientPrescriptionBasedOnRemID(ReminderPrescriptionID);
+
+                    String MedID = String.valueOf(PatientPrescription.getMedId());
+                    System.out.println("mam,amamammama " + MedID);
+                    Medicine medicine = epione.getMedicineBasedOnPrescription(MedID);
+
+
+                    String medName = medicine.getMedName();
+
+
+                    //then read out instruction to user
+                    //int timeToTakePerDay = PatientPrescription.getInstruction();
+                    int dosage = PatientPrescription.getDosage();
+                    String remarks = PatientPrescription.getRemarks();
+                    // "Please take Panadol from box 1 and take only 2 pills."
+
+
+                    //textToSpeech.speak("Please take " + medName + "from Box 1 and take only"+ dosage + " " + medicine.getMetricValue(),TextToSpeech.QUEUE_FLUSH,null);
+                    textToSpeech.speak(lang.getGiveMedInstructionResponse("1", medName, dosage, medicine.getMetricValue()), TextToSpeech.QUEUE_FLUSH, null);
+                    while (textToSpeech.isSpeaking()) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    //open cabinet box
+                    System.out.println("Epione open box");
+
+                    //TODO
+                    epione.openBox();
+                } else  //if not patient ask to try again
+                {
+                    //textToSpeech.speak("Sorry, Could you please try that again ? ",TextToSpeech.QUEUE_FLUSH,null);
+                    textToSpeech.speak(lang.getVERIFYING_FACE_FAIL_RESPONSE(), TextToSpeech.QUEUE_FLUSH, null);
+                    while (textToSpeech.isSpeaking()) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    //startCameraIntent();
+                    CameraActivity.patientFaceID = Patient.getFaceId();
+                    startActivityForResult(new Intent(MainActivity.this, CameraActivity.class), CAMERA_REQUEST);
+                }
+//            }
+//        };
+
+
+        //Threadings.runInBackgroundThread(runnable);
+        startHotword();
 
     }
 

@@ -45,7 +45,7 @@ public class SimplifiedChinese extends Language {
     @Override
     public String getAlertUserResponse(String patientName) {
         return
-                 patientName + ", 吃药的时间来了";
+                 patientName + ", 是时候您该服药了";
     }
 
     @Override

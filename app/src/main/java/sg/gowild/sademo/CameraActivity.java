@@ -194,7 +194,17 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
                         int c = count;
                         @Override
                         public void run() {
-                            textView.setText(String.valueOf(c));
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    // Stuff that updates the UI
+                                    textView.setText(String.valueOf(c));
+
+                                }
+                            });
+
                             c--;
                             if(c==0){
                                 this.cancel();

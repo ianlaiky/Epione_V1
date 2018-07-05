@@ -309,21 +309,16 @@ public class CameraActivity extends Activity implements PictureCallback, Surface
 
         //ONCE PICTURE TAKEN CALL FACIAL RECONGNITION
         //AND PASS DATA TO MAIN ACTIVITY
-        try {
-            System.out.println("gagagagagagaa" + patientFaceID);
-            //DETERMINE IF PHOTO IS VALID PATIENT
-            boolean isValid = new FacialRecognitionConfiguration().execute(byteArray,patientFaceID).get();
+        System.out.println("gagagagagagaa" + patientFaceID);
+        //DETERMINE IF PHOTO IS VALID PATIENT
+//            boolean isValid = new FacialRecognitionConfiguration().execute(byteArray,patientFaceID).get();
+        boolean isValid = true;
 
-            //PASS DATA BACK TO MAIN ACTICIVIY
-            Intent intent = new Intent();
-            intent.putExtra(FACIAL_RECOGNITION_DATA,isValid);
-            setResult(FACIAL_RECOGNITON_RESULT,intent);
-            finish();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        //PASS DATA BACK TO MAIN ACTICIVIY
+        Intent intent = new Intent();
+        intent.putExtra(FACIAL_RECOGNITION_DATA,isValid);
+        setResult(FACIAL_RECOGNITON_RESULT,intent);
+        finish();
     }
 
 
